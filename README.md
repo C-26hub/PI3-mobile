@@ -1,4 +1,4 @@
- # 📚 PI3
+ # 📚 PI3 - Gestão de Horas Complementares
 
 > **Resumo rápido:** [Uma frase curta que descreve o objetivo do projeto. Exemplo: “Uma aplicação web para monitorar compostagem doméstica usando sensores IoT.”]
 
