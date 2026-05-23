@@ -1,12 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import { Link, link } from 'expo-router';
 
-export default function Home() {
+export default function Cursos() {
   return (
     <View style={styles.container}>
-      <Text>Senac Horas</Text>
-      <Link href={"/login"}>Clique aqui meu querido e vá para Login</Link>
+      <Text>Aqui são os cursos</Text>
       <StatusBar style="auto" />
     </View>
   );
