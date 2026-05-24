@@ -32,6 +32,20 @@ export default function Layout() {
         }} 
       />
 
+      <Tabs.Screen 
+        name="solicitacoes" 
+        options={{ 
+          headerShown: false, 
+          title: 'Solicitações', 
+          tabBarIcon: ({ focused, color, size }) => {
+            if (focused) {
+              return <FontAwesome name="clipboard" size={size} color={color} />;
+            }
+            return <FontAwesome name="clipboard" size={size} color={color} />;
+          } 
+        }} 
+      />
+
       
     </Tabs>
   );
