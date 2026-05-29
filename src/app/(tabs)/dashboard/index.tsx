@@ -14,17 +14,9 @@ export default function Dashboard() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Pressable style={styles.button}>
+        <Pressable style={styles.button} onPress={() => setModalCadastro(true)}>
           <Text style={styles.buttonText}>+ Nova Atividade</Text>
         </Pressable>
-
-        <TouchableOpacity
-        onPress={() => setModalCadastro(true)}
-      >
-        <Text>
-          Cadastrar atividade
-        </Text>
-      </TouchableOpacity>
       </View>
 
       <Text style={styles.hello}>Olá, Filipe Xavier 👋</Text>
@@ -75,6 +67,26 @@ export default function Dashboard() {
       </View>
 
       <Button title="Ir para Home" onPress={() => router.replace("/")} />
+
+        <CadastroModal
+          visible={modalCadastro}
+          fechar={() => setModalCadastro(false)}
+          proximo={() => {setModalCadastro(false); setModalUpload(true)}}
+        />
+
+        <UploadModal
+          visible={modalUpload}
+          fechar={() => setModalUpload(false)}
+          finalizar={() => {
+            setModalUpload(false);
+            setModalSucesso(true)
+          }}
+        />
+
+        <SucessoModal
+          visible={modalSucesso}
+          fechar={() => setModalSucesso(false)}
+        />
     </ScrollView>
   );
 }
