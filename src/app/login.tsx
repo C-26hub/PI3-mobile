@@ -1,8 +1,7 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import { Link } from "expo-router";
-
+import { Link, router } from "expo-router";
 
 export default function Home() {
   return (
@@ -17,7 +16,7 @@ export default function Home() {
           Informe seus dados para prosseguir
         </Text>
 
-        <TouchableOpacity style={styles.botao}>
+        <TouchableOpacity style={styles.botao} onPress={() => router.push("/dashboard")}>
           <Text style={styles.textoBotao}>Entrar</Text>
         </TouchableOpacity>
 
