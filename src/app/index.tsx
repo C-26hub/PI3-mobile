@@ -12,6 +12,7 @@ export default function Home() {
       <Text>Senac Horas</Text>
       <Link href={"/login"}>Clique aqui meu querido e vá para Login</Link>
       <Button title="Ir para Dashboard" onPress={handleNavigation} />
+      <Link href={"/recuperacao-aluno"}>Clique aqui para ir para Recuperação de Alunos</Link>
     </View>  
   );
 }
