@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <View style={styles.container}>
       <Text>Senac Horas</Text>
-      <Link href={"/login"}>Clique aqui meu querido e vá para Login</Link>
+      <Link href={"/login"}>Clique aqui e vá para Login</Link>
       <Button title="Ir para Dashboard" onPress={handleNavigation} />
     </View>  
   );
