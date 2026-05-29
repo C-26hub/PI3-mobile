@@ -1,21 +1,30 @@
+import { useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  ScrollView,
-  Pressable,
-} from "react-native";
+import {StyleSheet,Text,View,Button,ScrollView,Pressable, TouchableOpacity} from "react-native";
 import { Link, router } from "expo-router";
 
+import CadastroModal from "../../../components/CadModal";
+import UploadModal from "../../../components/UploadModal";
+import SucessoModal from "../../../components/SucessModal";
+
 export default function Dashboard() {
+  const [modalCadastro, setModalCadastro] = useState(false);
+  const [modalUpload, setModalUpload] = useState(false);
+  const [modalSucesso, setModalSucesso] = useState(false);
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Pressable style={styles.button}>
           <Text style={styles.buttonText}>+ Nova Atividade</Text>
         </Pressable>
+
+        <TouchableOpacity
+        onPress={() => setModalCadastro(true)}
+      >
+        <Text>
+          Cadastrar atividade
+        </Text>
+      </TouchableOpacity>
       </View>
 
       <Text style={styles.hello}>Olá, Filipe Xavier 👋</Text>
