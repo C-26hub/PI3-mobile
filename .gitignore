@@ -3,7 +3,11 @@
 # dependencies
 node_modules/
 
+# Claude
 .claude/
+
+# History
+.history/
 
 # Expo
 .expo/
