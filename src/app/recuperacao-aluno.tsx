@@ -7,54 +7,50 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
+import { useState } from 'react';
 
 export default function RecuperacaoAluno() {
+
+  const [matricula, setMatricula] = useState('');
+  const [email, setEmail] = useState('');
+
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Image
-          source={{
-            uri: 'https://upload.wikimedia.org/wikipedia/commons/4/48/Senac_logo.svg',
-          }}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        <Image style={styles.logo} source={require('../../assets/Senac_logo.png')}/>
 
         <Text style={styles.text}>
           Informações para recuperação de acesso
         </Text>
 
         <Text style={styles.description}>
-          Um link para redefinição de senha será enviado
+          Um link para redefinição de senha será enviado para o seu e-mail cadastrado no sistema.
         </Text>
 
         <Text style={styles.description}>
-          para o seu e-mail cadastrado no sistema.
+          Caso não receba o e-mail, verifique sua caixa de spam ou entre em contato com a secretaria
         </Text>
-
-        <Text style={styles.warning}>
-          Caso não receba o e-mail, verifique sua caixa
-        </Text>
-
-        <Text style={styles.warning}>
-          de spam ou entre em contato com a secretaria
-        </Text>
-
-        <Text style={styles.label}>Matrícula</Text>
+        
+        <TextInput
+                  style={[styles.input, styles.marginTop]}
+                  placeholder="Matricula"
+                  placeholderTextColor="#999"
+                  value={matricula}
+                  onChangeText={setMatricula}
+                />
 
         <TextInput
-          style={styles.input}
-        />
+                  style={[styles.input, styles.marginTop]}
+                  placeholder="Email"
+                  placeholderTextColor="#999"
+                  value={email}
+                  onChangeText={setEmail}
+                />
 
-        <Text style={styles.label}>E-mail</Text>
-
-        <TextInput
-          style={styles.input}
-        />
-
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Enviar link</Text>
-        </TouchableOpacity>
+        <TouchableOpacity style={[styles.botao, (!matricula || !email) && { opacity: 0.5 }]}
+                disabled={!matricula || !email}>
+                  <Text style={styles.textoBotao}>Entrar</Text>
+                </TouchableOpacity>
       </View>
 
       <StatusBar style="light" />
@@ -71,25 +67,24 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    width: 340,
-    backgroundColor: '#D9D9D9',
-    borderRadius: 10,
+    backgroundColor: 'white',
     padding: 20,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '85%',
   },
 
   logo: {
-    width: 90,
-    height: 50,
-    alignSelf: 'center',
-    marginBottom: 10,
+    width: 100,
+    height: 60,
+    margin: 20,
   },
 
   text: {
-  fontSize: 12,
-  textAlign: 'center',
-  color: '#000',
-  marginBottom: 8,
-  fontWeight: 'bold',
+    color: '#0A0A0A',
+    marginBottom: 15,
+    textAlign: 'center',
 
   },
 
@@ -107,6 +102,21 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 
+   input: {
+    width: '100%',
+    height: 42,
+    backgroundColor: '#F5F5F5',
+    borderWidth: 1,
+    borderColor: '#999',
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    marginBottom: 20,
+  },
+
+  marginTop: {
+    marginTop: 10,
+  },
+
   label: {
     fontSize: 11,
     color: '#000',
@@ -114,28 +124,17 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 
-  input: {
+  botao: {
+    backgroundColor: '#F28322',
     width: '100%',
-    height: 35,
-    backgroundColor: '#F5F5F5',
-    borderWidth: 1,
-    borderColor: '#999',
-    borderRadius: 6,
-    paddingHorizontal: 10,
-  },
-
-  button: {
-    backgroundColor: '#F58220',
-    marginTop: 20,
-    height: 35,
-    borderRadius: 20,
-    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: 10,
     alignItems: 'center',
+    marginTop: 15,
   },
 
-  buttonText: {
+  textoBotao: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 12,
   },
 });
