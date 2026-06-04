@@ -1,13 +1,39 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import { Link, router } from "expo-router";
 import { useState } from 'react';
+import { login as loginService } from '../services/authService';
+import { salvarUsuario } from '../services/authStorage';
 
 export default function Home() {
 
   const [login, setLogin] = useState('');
   const [senha, setSenha] = useState('');
+  const [erro, setErro] = useState('');
+  const [loading, setLoading] = useState(false);
+  async function handleLogin() {
+    try {
+      setErro('');
+      setLoading(true);
+      const data = await loginService(login, senha);
+      
+      const usuario = data.usuario;
+
+      if (usuario.tipo !== 'ALUNO') {
+        setErro('Acesso negado.');
+        return;
+      }
+
+      await salvarUsuario(usuario);
+
+      router.replace('/dashboard');
+    } catch (error) {
+      setErro('Login ou senha inválidos');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -38,10 +64,22 @@ export default function Home() {
           onChangeText={setSenha}
         />
 
-        <TouchableOpacity style={[styles.botao, (!login || !senha) && { opacity: 0.5 }]}
-        disabled={!login || !senha}
-        onPress={() => router.push("/dashboard")}>
-          <Text style={styles.textoBotao}>Entrar</Text>
+        {erro ? (
+          <Text style={styles.erro}>
+            {erro}
+          </Text>
+        ) : null}
+
+        <TouchableOpacity style={[styles.botao, (!login || !senha || loading) && { opacity: 0.5 }]}
+        disabled={!login || !senha || loading}
+        onPress={handleLogin}>
+          {loading ? (
+            <ActivityIndicator color="#FFF" />
+          ) : (
+            <Text style={styles.textoBotao}>
+              Entrar
+            </Text>
+          )}
         </TouchableOpacity>
 
         <Link href="/recuperacao-aluno" style={styles.link}>
@@ -120,5 +158,11 @@ const styles = StyleSheet.create({
   textoBotao: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+
+  erro: {
+    color: 'red',
+    marginBottom: 10,
+    textAlign: 'center',
   },
 });
