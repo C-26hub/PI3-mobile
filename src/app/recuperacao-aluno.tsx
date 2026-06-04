@@ -8,6 +8,7 @@ import {
   Image,
 } from 'react-native';
 import { useState } from 'react';
+import { Link, router } from "expo-router";
 
 export default function RecuperacaoAluno() {
 
@@ -51,7 +52,14 @@ export default function RecuperacaoAluno() {
                 disabled={!matricula || !email}>
                   <Text style={styles.textoBotao}>Entrar</Text>
                 </TouchableOpacity>
+
+
+                <Link href="/recuperacao-senha" style={styles.link}>
+                botão temporário para entrar tela de madu
+              </Link>
       </View>
+
+      
 
       <StatusBar style="light" />
     </View>
@@ -86,6 +94,12 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center',
 
+  },
+
+  link: {
+    color: '#004A8D',
+    marginVertical: 20,
+    textAlign: 'center',
   },
 
   description: {
