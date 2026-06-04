@@ -1,3 +1,4 @@
+
 import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
@@ -6,14 +7,34 @@ import {
   Button,
   ScrollView,
   Pressable,
+  Image,
 } from "react-native";
 import { router } from "expo-router";
+import React, { useState } from "react";
 
 export default function Dashboard() {
+  const [mostrarCursos, setMostrarCursos] = useState(false);
+  const [mostrarCategorias, setMostrarCategorias] = useState(false);
+  const [cursoSelecionado, setCursoSelecionado] = useState<string | null>(null);
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState<string | null>(null);
+
+
   return (
     <ScrollView style={styles.container}>
+
+      {/* Logo */}
+      <View style={styles.logoContainer}>
+        <Image
+          source={{ uri: "https://via.placeholder.com/120x60.png?text=Logo" }}
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
+      </View>
+
+      {/* Linha Laranja */}
       <View style={styles.orangeLine} />
 
+      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.hello}>
           Olá, Filipe Xavier 👋
@@ -26,7 +47,214 @@ export default function Dashboard() {
         </Pressable>
       </View>
 
+      {/* Filtros */}
+      <View style={styles.filterContainer}>
+
+        <Text style={styles.filterLabel}>
+           Filtro:
+        </Text>
+
+        <Pressable
+          style={styles.filterButton}
+          onPress={() => {
+            setMostrarCursos(!mostrarCursos);
+            setMostrarCategorias(false);
+          }}
+        >
+          <Text style={styles.filterButtonText}>
+            Curso ▼
+          </Text>
+        </Pressable>
+
+        <Pressable
+          style={styles.filterButton}
+          onPress={() => {
+            setMostrarCategorias(!mostrarCategorias);
+            setMostrarCursos(false);
+          }}
+        >
+          <Text style={styles.filterButtonText}>
+            Categoria ▼
+          </Text>
+        </Pressable>
+
+      </View>
+
+      {mostrarCursos && (
+  <View style={styles.dropdown}>
+
+    <Pressable
+      onPress={() => {
+        setCursoSelecionado(
+          "Análise e Desenvolvimento de Sistemas"
+        );
+        setMostrarCursos(false);
+      }}
+    >
+      <Text
+        style={[
+          styles.dropdownItem,
+          cursoSelecionado ===
+            "Análise e Desenvolvimento de Sistemas" &&
+            styles.itemSelecionado,
+        ]}
+      >
+        Análise e Desenvolvimento de Sistemas
+      </Text>
+    </Pressable>
+
+    <Pressable
+      onPress={() => {
+        setCursoSelecionado("Biomedicina");
+        setMostrarCursos(false);
+      }}
+    >
+      <Text
+        style={[
+          styles.dropdownItem,
+          cursoSelecionado === "Biomedicina" &&
+            styles.itemSelecionado,
+        ]}
+      >
+        Biomedicina
+      </Text>
+    </Pressable>
+
+    <Pressable
+      onPress={() => {
+        setCursoSelecionado("Gastronomia");
+        setMostrarCursos(false);
+      }}
+    >
+      <Text
+        style={[
+          styles.dropdownItem,
+          cursoSelecionado === "Gastronomia" &&
+            styles.itemSelecionado,
+        ]}
+      >
+        Gastronomia
+      </Text>
+    </Pressable>
+
+    <Pressable
+      onPress={() => {
+        setCursoSelecionado("Jogos Digitais");
+        setMostrarCursos(false);
+      }}
+    >
+      <Text
+        style={[
+          styles.dropdownItem,
+          cursoSelecionado === "Jogos Digitais" &&
+            styles.itemSelecionado,
+        ]}
+      >
+        Jogos Digitais
+      </Text>
+    </Pressable>
+
+    <Pressable
+      onPress={() => {
+        setCursoSelecionado("Moda");
+        setMostrarCursos(false);
+      }}
+    >
+      <Text
+        style={[
+          styles.dropdownItem,
+          cursoSelecionado === "Moda" &&
+            styles.itemSelecionado,
+        ]}
+      >
+        Moda
+      </Text>
+    </Pressable>
+
+    <Text style={styles.verMais}>
+      Ver Mais...
+    </Text>
+
+  </View>
+)}
+
+{mostrarCategorias && (
+  <View style={styles.dropdown}>
+
+    <Pressable
+      onPress={() => {
+        setCategoriaSelecionada("Pesquisa");
+        setMostrarCategorias(false);
+      }}
+    >
+      <Text
+        style={[
+          styles.dropdownItem,
+          categoriaSelecionada === "Pesquisa" &&
+            styles.itemSelecionado,
+        ]}
+      >
+        Pesquisa
+      </Text>
+    </Pressable>
+
+    <Pressable
+      onPress={() => {
+        setCategoriaSelecionada("Extensão");
+        setMostrarCategorias(false);
+      }}
+    >
+      <Text
+        style={[
+          styles.dropdownItem,
+          categoriaSelecionada === "Extensão" &&
+            styles.itemSelecionado,
+        ]}
+      >
+        Extensão
+      </Text>
+    </Pressable>
+
+    <Pressable
+      onPress={() => {
+        setCategoriaSelecionada("Ensino");
+        setMostrarCategorias(false);
+      }}
+    >
+      <Text
+        style={[
+          styles.dropdownItem,
+          categoriaSelecionada === "Ensino" &&
+            styles.itemSelecionado,
+        ]}
+      >
+        Ensino
+      </Text>
+    </Pressable>
+
+    <Pressable
+      onPress={() => {
+        setCategoriaSelecionada("Geral");
+        setMostrarCategorias(false);
+      }}
+    >
+      <Text
+        style={[
+          styles.dropdownItem,
+          categoriaSelecionada === "Geral" &&
+            styles.itemSelecionado,
+        ]}
+      >
+        Geral
+      </Text>
+    </Pressable>
+
+  </View>
+)}
+
+      {/* Cards */}
       <View style={styles.cardsContainer}>
+
         <View
           style={[
             styles.smallCard,
@@ -90,15 +318,14 @@ export default function Dashboard() {
             de 100h exigidas
           </Text>
         </View>
+
       </View>
 
       <Text style={styles.progressTitle}>
         Barra de progresso
       </Text>
 
-      <Text style={styles.courseHours}>
-        Carga horária do curso: 100h
-      </Text>
+    
 
       <View style={styles.progressBackground}>
         <View style={styles.progressFill} />
@@ -110,6 +337,7 @@ export default function Dashboard() {
       </View>
 
       <View style={styles.warningBox}>
+
         <View style={styles.warningHeader}>
           <Text style={styles.warningHeaderText}>
             🔔 Avisos
@@ -118,33 +346,38 @@ export default function Dashboard() {
 
         <View style={styles.tableRow}>
           <Text style={styles.activityText}>
-            Monitoria em Design UI/UX (13h)
+            Monitoria em Design UI/UX (15h)
           </Text>
 
-          <Text style={styles.approved}>
-            Aprovada ✓
+          <Text style={styles.statusText}>
+            Sua atividade foi aprovada 
           </Text>
         </View>
 
         <View style={styles.tableRow}>
           <Text style={styles.activityText}>
-            Curso de Javascript (8h)
+            Curso de Javascript (5h)
           </Text>
 
-          <Text style={styles.rejected}>
-            Rejeitada ✕
+          <Text style={styles.statusText}>
+            Atividade rejeitada: faltou comprovante
           </Text>
         </View>
 
         <View style={styles.tableRow}>
           <Text style={styles.activityText}>
-            SEO Hack North Conference
+            SQL week Recife Conference (10h)
           </Text>
 
-          <Text style={styles.pending}>
-            Em análise ⏳
+          <Text style={styles.statusText}>
+            Sua atividade está em análise 
           </Text>
         </View>
+
+        <View style={styles.WarningFooter}>
+          <Text style={styles.warningFooterArrow}>  </Text>
+        </View>
+
       </View>
 
       <Button
@@ -163,10 +396,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
 
+  logoContainer: {
+    paddingTop: 15,
+    paddingHorizontal: 20,
+  },
+
+  logoImage: {
+    width: 120,
+    height: 60,
+  },
+
   orangeLine: {
     height: 4,
     backgroundColor: "#ef963f",
-    marginTop: 5,
     marginBottom: 20,
   },
 
@@ -174,7 +416,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 25,
+    marginBottom: 20,
     paddingHorizontal: 20,
   },
 
@@ -192,6 +434,33 @@ const styles = StyleSheet.create({
 
   buttonText: {
     color: "#fff",
+    fontWeight: "bold",
+  },
+
+  filterContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#d9d9d9",
+    marginHorizontal: 20,
+    padding: 10,
+    borderRadius: 12,
+    marginBottom: 20,
+  },
+
+  filterLabel: {
+    fontSize: 18,
+    marginRight: 10,
+  },
+
+  filterButton: {
+    backgroundColor: "#e7a766",
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    borderRadius: 12,
+    marginRight: 10,
+  },
+
+  filterButtonText: {
     fontWeight: "bold",
   },
 
@@ -296,28 +565,62 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 15,
+    paddingVertical: 25,
+    paddingHorizontal: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
   },
 
   activityText: {
-    flex: 1,
-    marginRight: 10,
+    width: "35%",
+    fontSize: 10,
+    fontWeight: "600",
   },
 
-  approved: {
-    color: "green",
-    fontWeight: "bold",
+  statusText: {
+     width: "50%",
+     textAlign: "right",
+     fontSize: 9.9,
+     
   },
 
-  rejected: {
-    color: "red",
-    fontWeight: "bold",
+  WarningFooter: {
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
+    borderTopWidth: 1,
+    borderTopColor: "#ffffff",
   },
 
-  pending: {
-    color: "#ef963f",
-    fontWeight: "bold",
+  warningFooterArrow: {
+    fontSize: 22,
+    color: "#ffffff",
   },
+
+  dropdown: {
+  backgroundColor: "#fff",
+  marginHorizontal: 20,
+  borderWidth: 1,
+  borderColor: "#ccc",
+  marginTop: -15,
+  marginBottom: 15,
+},
+
+dropdownItem: {
+  padding: 15,
+  fontSize: 16,
+  borderBottomWidth: 1,
+  borderBottomColor: "#ffffff",
+},
+
+itemSelecionado: {
+  backgroundColor: "#efc08f",
+},
+
+verMais: {
+  color: "#0066cc",
+  padding: 15,
+  fontSize: 16,
+},
 });
