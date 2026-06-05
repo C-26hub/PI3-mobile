@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
+import { router } from "expo-router";
 
 interface Props {
   visible: boolean;
@@ -34,7 +35,7 @@ export default function PasswordChangedModal({
 
           <TouchableOpacity
             style={styles.button}
-            onPress={onClose}
+            onPress={() => router.replace("/login")}
           >
             <Text style={styles.buttonText}>
               Voltar para login

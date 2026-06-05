@@ -13,7 +13,16 @@ export default function Home() {
       <Pressable style={styles.button} onPress={handleNavigation}>
         <Text style={styles.buttonText}>Login</Text>
       </Pressable>
-    </View>  
+
+    <View style={{ marginTop: 20 }}>
+  <Button
+    title="Ir para Tela de Recuperação de Senha"
+    onPress={() => router.replace("/recuperacao-senha")}
+  />
+</View>
+
+      <StatusBar style="auto" />
+    </View>
   );
 }
 
