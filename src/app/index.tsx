@@ -12,26 +12,29 @@ export default function Home() {
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
   const [loading, setLoading] = useState(false);
-  async function handleLogin() {
-    try {
-      setErro('');
-      setLoading(true);
-      const data = await loginService(login, senha);
-      
-      const usuario = data.usuario;
 
-      if (usuario.tipo !== 'ALUNO') {
-        setErro('Acesso negado.');
-        return;
+  async function handleLogin() {
+    setErro('');
+
+    try {
+      const response = await fetch('https://api-horas-complementares.onrender.com/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: login, senha }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
       }
 
-      await salvarUsuario(usuario);
+      const data = await response.json();
+      router.push('/(tabs)/dashboard');
 
-      router.replace('/dashboard');
     } catch (error) {
-      setErro('Login ou senha inválidos');
-    } finally {
-      setLoading(false);
+      setErro('Erro ao tentar fazer login.');
+      console.error(error);
     }
   }
 
