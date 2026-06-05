@@ -1,15 +1,33 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image } from 'react-native';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
+const COLORS = {
+  white: '#fff',
+  orange: '#ef963f',
+  card: '#ebe8e8',
+  iconBackground: '#b8c8e4',
+  icon: '#0b4ea2',
+  textSecondary: '#5c5b5b',
+  success: '#16c45b',
+  successText: '#24391b',
+  arrow: '#222',
+};
+
+const COURSE = {
+  nome: 'Análise e Desenvolvimento de Sistemas',
+  faculdade: 'Faculdade Senac',
+  turno: 'Turno: Manhã',
+  status: 'ATIVO',
+  periodo: '• 3º Período',
+};
 
 export default function Cursos() {
   return (
     <View style={styles.container}>
-
-      {/* Header */}
       <View style={styles.header}>
         <Image
-         
+          source={require('../../assets/Senac_logo.svg.png')}
           style={styles.logoImage}
           resizeMode="contain"
         />
@@ -17,61 +35,55 @@ export default function Cursos() {
 
       <View style={styles.orangeLine} />
 
-      <Text style={styles.title}>
-        Meus Cursos
-      </Text>
+      <Text style={styles.title}>Meus Cursos</Text>
 
       <Text style={styles.subtitle}>
         Selecione o curso para gerenciar suas horas e certificados.
       </Text>
 
-      {/* Card */}
       <View style={styles.card}>
-
         <View style={styles.iconBox}>
-          <Image
-         
-            style={styles.computerIcon}
-            resizeMode="contain"
+          <MaterialCommunityIcons
+            name="laptop"
+            size={32}
+            color={COLORS.icon}
           />
         </View>
 
         <View style={styles.info}>
-
           <Text style={styles.course}>
-            Análise e Desenvolvimento de Sistemas
+            {COURSE.nome}
           </Text>
 
           <View style={styles.rowInfo}>
             <Text style={styles.faculdade}>
-              Faculdade Senac
+              {COURSE.faculdade}
             </Text>
 
             <Text style={styles.turno}>
-              Turno: Manhã
+              {COURSE.turno}
             </Text>
           </View>
 
           <View style={styles.footer}>
             <View style={styles.badge}>
               <Text style={styles.badgeText}>
-                ATIVO
+                {COURSE.status}
               </Text>
             </View>
 
             <Text style={styles.periodo}>
-              • 3º Período
+              {COURSE.periodo}
             </Text>
           </View>
-
         </View>
 
-        <Image
-          
+        <MaterialIcons
+          name="keyboard-arrow-right"
+          size={34}
+          color={COLORS.arrow}
           style={styles.arrowIcon}
-          resizeMode="contain"
         />
-
       </View>
 
       <StatusBar style="auto" />
@@ -82,7 +94,7 @@ export default function Cursos() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
   },
 
   header: {
@@ -91,13 +103,13 @@ const styles = StyleSheet.create({
   },
 
   logoImage: {
-    width: 120,
-    height: 60,
+    width: 70,
+    height: 50,
   },
 
   orangeLine: {
     height: 4,
-    backgroundColor: '#ef963f',
+    backgroundColor: COLORS.orange,
     marginTop: 5,
     marginBottom: 20,
   },
@@ -110,14 +122,14 @@ const styles = StyleSheet.create({
 
   subtitle: {
     marginTop: 10,
-    color: '#5c5b5b',
     marginBottom: 25,
     marginHorizontal: 20,
     fontSize: 16,
+    color: COLORS.textSecondary,
   },
 
   card: {
-    backgroundColor: '#ebe8e8',
+    backgroundColor: COLORS.card,
     borderRadius: 20,
     padding: 15,
     marginHorizontal: 20,
@@ -129,14 +141,9 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 15,
-    backgroundColor: '#b8c8e4',
+    backgroundColor: COLORS.iconBackground,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-
-  computerIcon: {
-    width: 35,
-    height: 35,
   },
 
   info: {
@@ -145,24 +152,24 @@ const styles = StyleSheet.create({
   },
 
   course: {
-    fontWeight: 'bold',
     fontSize: 11.7,
+    fontWeight: 'bold',
   },
 
   rowInfo: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     marginTop: 5,
   },
 
   faculdade: {
-    color: '#5c5b5b',
     fontSize: 13,
+    color: COLORS.textSecondary,
   },
 
   turno: {
-    color: '#5c5b5b',
     fontSize: 13,
+    color: COLORS.textSecondary,
+    marginLeft: 25,
   },
 
   footer: {
@@ -172,26 +179,24 @@ const styles = StyleSheet.create({
   },
 
   badge: {
-    backgroundColor: '#16c45b',
+    backgroundColor: COLORS.success,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 20,
   },
 
   badgeText: {
-    color: '#24391b',
+    color: COLORS.successText,
     fontSize: 10,
     fontWeight: 'bold',
   },
 
   periodo: {
     marginLeft: 10,
-    color: '#5c5b5b',
+    color: COLORS.textSecondary,
   },
 
   arrowIcon: {
-    width: 24,
-    height: 24,
     marginLeft: 10,
   },
 });

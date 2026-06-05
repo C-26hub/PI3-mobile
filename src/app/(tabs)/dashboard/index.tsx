@@ -1,4 +1,3 @@
-
 import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
@@ -10,28 +9,99 @@ import {
   Image,
 } from "react-native";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import { useState } from "react";
+
+import {
+  MaterialCommunityIcons,
+  MaterialIcons,
+  AntDesign,
+} from "@expo/vector-icons";
+
+const CURSOS = [
+  "Análise e Desenvolvimento de Sistemas",
+  "Biomedicina",
+  "Gastronomia",
+  "Jogos Digitais",
+  "Moda",
+];
+
+const CATEGORIAS = [
+  "Pesquisa",
+  "Extensão",
+  "Ensino",
+  "Geral",
+];
+
+const CARDS = [
+  {
+    titulo: "Horas Aprovadas",
+    valor: "45h",
+    cor: "#18b84f",
+  },
+  {
+    titulo: "Horas em análise",
+    valor: "60h",
+    cor: "#ef7d00",
+  },
+  {
+    titulo: "Horas rejeitadas",
+    valor: "20h",
+    cor: "#ef4444",
+  },
+  {
+    titulo: "Horas Faltantes",
+    valor: "55h",
+    sub: "de 100h exigidas",
+    cor: "#0066cc",
+  },
+];
 
 export default function Dashboard() {
   const [mostrarCursos, setMostrarCursos] = useState(false);
   const [mostrarCategorias, setMostrarCategorias] = useState(false);
+
   const [cursoSelecionado, setCursoSelecionado] = useState<string | null>(null);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState<string | null>(null);
 
+  const renderDropdown = (
+    itens: string[],
+    selecionado: string | null,
+    setSelecionado: (valor: string) => void,
+    fechar: () => void
+  ) => (
+    <View style={styles.dropdown}>
+      {itens.map((item) => (
+        <Pressable
+          key={item}
+          onPress={() => {
+            setSelecionado(item);
+            fechar();
+          }}
+        >
+          <Text
+            style={[
+              styles.dropdownItem,
+              selecionado === item && styles.itemSelecionado,
+            ]}
+          >
+            {item}
+          </Text>
+        </Pressable>
+      ))}
+    </View>
+  );
 
   return (
     <ScrollView style={styles.container}>
-
       {/* Logo */}
       <View style={styles.logoContainer}>
         <Image
-          source={{ uri: "https://via.placeholder.com/120x60.png?text=Logo" }}
+          source={require("../../assets/Senac_logo.svg.png")}
           style={styles.logoImage}
           resizeMode="contain"
         />
       </View>
 
-      {/* Linha Laranja */}
       <View style={styles.orangeLine} />
 
       {/* Header */}
@@ -41,17 +111,22 @@ export default function Dashboard() {
         </Text>
 
         <Pressable style={styles.button}>
+          <MaterialCommunityIcons
+            name="plus"
+            size={20}
+            color="#fff"
+          />
+
           <Text style={styles.buttonText}>
-            + Nova Atividade
+            Nova Atividade
           </Text>
         </Pressable>
       </View>
 
       {/* Filtros */}
       <View style={styles.filterContainer}>
-
         <Text style={styles.filterLabel}>
-           Filtro:
+          Filtro:
         </Text>
 
         <Pressable
@@ -61,9 +136,17 @@ export default function Dashboard() {
             setMostrarCategorias(false);
           }}
         >
-          <Text style={styles.filterButtonText}>
-            Curso ▼
-          </Text>
+          <View style={styles.filterContent}>
+  <Text style={styles.filterButtonText}>
+    Curso
+  </Text>
+
+  <MaterialIcons
+    name="keyboard-arrow-down"
+    size={20}
+    color="#000"
+  />
+</View>
         </Pressable>
 
         <Pressable
@@ -73,288 +156,101 @@ export default function Dashboard() {
             setMostrarCursos(false);
           }}
         >
-          <Text style={styles.filterButtonText}>
-            Categoria ▼
-          </Text>
-        </Pressable>
+          <View style={styles.filterContent}>
+  <Text style={styles.filterButtonText}>
+    Categoria
+  </Text>
 
+  <MaterialIcons
+    name="keyboard-arrow-down"
+    size={20}
+    color="#000"
+  />
+</View>
+        </Pressable>
       </View>
 
-      {mostrarCursos && (
-  <View style={styles.dropdown}>
+      {mostrarCursos &&
+        renderDropdown(
+          CURSOS,
+          cursoSelecionado,
+          setCursoSelecionado,
+          () => setMostrarCursos(false)
+        )}
 
-    <Pressable
-      onPress={() => {
-        setCursoSelecionado(
-          "Análise e Desenvolvimento de Sistemas"
-        );
-        setMostrarCursos(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          cursoSelecionado ===
-            "Análise e Desenvolvimento de Sistemas" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Análise e Desenvolvimento de Sistemas
-      </Text>
-    </Pressable>
-
-    <Pressable
-      onPress={() => {
-        setCursoSelecionado("Biomedicina");
-        setMostrarCursos(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          cursoSelecionado === "Biomedicina" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Biomedicina
-      </Text>
-    </Pressable>
-
-    <Pressable
-      onPress={() => {
-        setCursoSelecionado("Gastronomia");
-        setMostrarCursos(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          cursoSelecionado === "Gastronomia" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Gastronomia
-      </Text>
-    </Pressable>
-
-    <Pressable
-      onPress={() => {
-        setCursoSelecionado("Jogos Digitais");
-        setMostrarCursos(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          cursoSelecionado === "Jogos Digitais" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Jogos Digitais
-      </Text>
-    </Pressable>
-
-    <Pressable
-      onPress={() => {
-        setCursoSelecionado("Moda");
-        setMostrarCursos(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          cursoSelecionado === "Moda" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Moda
-      </Text>
-    </Pressable>
-
-    <Text style={styles.verMais}>
-      Ver Mais...
-    </Text>
-
-  </View>
-)}
-
-{mostrarCategorias && (
-  <View style={styles.dropdown}>
-
-    <Pressable
-      onPress={() => {
-        setCategoriaSelecionada("Pesquisa");
-        setMostrarCategorias(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          categoriaSelecionada === "Pesquisa" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Pesquisa
-      </Text>
-    </Pressable>
-
-    <Pressable
-      onPress={() => {
-        setCategoriaSelecionada("Extensão");
-        setMostrarCategorias(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          categoriaSelecionada === "Extensão" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Extensão
-      </Text>
-    </Pressable>
-
-    <Pressable
-      onPress={() => {
-        setCategoriaSelecionada("Ensino");
-        setMostrarCategorias(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          categoriaSelecionada === "Ensino" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Ensino
-      </Text>
-    </Pressable>
-
-    <Pressable
-      onPress={() => {
-        setCategoriaSelecionada("Geral");
-        setMostrarCategorias(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          categoriaSelecionada === "Geral" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Geral
-      </Text>
-    </Pressable>
-
-  </View>
-)}
+      {mostrarCategorias &&
+        renderDropdown(
+          CATEGORIAS,
+          categoriaSelecionada,
+          setCategoriaSelecionada,
+          () => setMostrarCategorias(false)
+        )}
 
       {/* Cards */}
       <View style={styles.cardsContainer}>
+        {CARDS.map((card) => (
+          <View
+            key={card.titulo}
+            style={[
+              styles.smallCard,
+              { backgroundColor: card.cor },
+            ]}
+          >
+            <Text style={styles.cardTitle}>
+              {card.titulo}
+            </Text>
 
-        <View
-          style={[
-            styles.smallCard,
-            { backgroundColor: "#18b84f" },
-          ]}
-        >
-          <Text style={styles.cardTitle}>
-            Horas Aprovadas
-          </Text>
+            <Text style={styles.cardValue}>
+              {card.valor}
+            </Text>
 
-          <Text style={styles.cardValue}>
-            45h
-          </Text>
-        </View>
-
-        <View
-          style={[
-            styles.smallCard,
-            { backgroundColor: "#ef963f" },
-          ]}
-        >
-          <Text style={styles.cardTitle}>
-            Horas em análise
-          </Text>
-
-          <Text style={styles.cardValue}>
-            60h
-          </Text>
-        </View>
-
-        <View
-          style={[
-            styles.smallCard,
-            { backgroundColor: "#ef4444" },
-          ]}
-        >
-          <Text style={styles.cardTitle}>
-            Horas rejeitadas
-          </Text>
-
-          <Text style={styles.cardValue}>
-            20h
-          </Text>
-        </View>
-
-        <View
-          style={[
-            styles.smallCard,
-            { backgroundColor: "#0066cc" },
-          ]}
-        >
-          <Text style={styles.cardTitle}>
-            Horas Faltantes
-          </Text>
-
-          <Text style={styles.cardValue}>
-            55h
-          </Text>
-
-          <Text style={styles.cardSub}>
-            de 100h exigidas
-          </Text>
-        </View>
-
-      </View>
-
-      <Text style={styles.progressTitle}>
-        Barra de progresso
-      </Text>
-
-    
-
-      <View style={styles.progressBackground}>
-        <View style={styles.progressFill} />
-      </View>
-
-      <View style={styles.progressNumbers}>
-        <Text>45h</Text>
-        <Text>100h</Text>
+            {card.sub && (
+              <Text style={styles.cardSub}>
+                {card.sub}
+              </Text>
+            )}
+          </View>
+        ))}
       </View>
 
       <View style={styles.warningBox}>
-
         <View style={styles.warningHeader}>
           <Text style={styles.warningHeaderText}>
             🔔 Avisos
           </Text>
         </View>
 
+        {/* Aviso 1 */}
         <View style={styles.tableRow}>
+          <MaterialCommunityIcons
+            name="file-document-outline"
+            size={28}
+            color="#666"
+          />
+
           <Text style={styles.activityText}>
             Monitoria em Design UI/UX (15h)
           </Text>
 
           <Text style={styles.statusText}>
-            Sua atividade foi aprovada 
+            Sua atividade foi aprovada
           </Text>
+
+          <AntDesign
+            name="check-circle"
+            size={22}
+            color="#22c55e"
+          />
         </View>
 
+        {/* Aviso 2 */}
         <View style={styles.tableRow}>
+          <MaterialCommunityIcons
+            name="file-document-outline"
+            size={28}
+            color="#666"
+          />
+
           <Text style={styles.activityText}>
             Curso de Javascript (5h)
           </Text>
@@ -362,22 +258,44 @@ export default function Dashboard() {
           <Text style={styles.statusText}>
             Atividade rejeitada: faltou comprovante
           </Text>
+
+          <AntDesign
+            name="close-circle"
+            size={22}
+            color="#ef4444"
+          />
         </View>
 
+        {/* Aviso 3 */}
         <View style={styles.tableRow}>
+          <MaterialCommunityIcons
+            name="file-document-outline"
+            size={28}
+            color="#666"
+          />
+
           <Text style={styles.activityText}>
-            SQL week Recife Conference (10h)
+            SQL Week Recife Conference (10h)
           </Text>
 
           <Text style={styles.statusText}>
-            Sua atividade está em análise 
+            Sua atividade está em análise
           </Text>
+
+          <MaterialCommunityIcons
+            name="progress-clock"
+            size={24}
+            color="#f59e0b"
+          />
         </View>
 
-        <View style={styles.WarningFooter}>
-          <Text style={styles.warningFooterArrow}>  </Text>
+        <View style={styles.warningFooter}>
+          <MaterialIcons
+            name="keyboard-arrow-down"
+            size={34}
+            color="#999"
+          />
         </View>
-
       </View>
 
       <Button
@@ -390,34 +308,56 @@ export default function Dashboard() {
   );
 }
 
+const COLORS = {
+  white: "#fff",
+  primary: "#ef7d00",
+  secondary: "#ef963f",
+  filterButton: "#e7a766",
+  selectedItem: "#efc08f",
+  border: "#ddd",
+  borderLight: "#e5e5e5",
+  dropdownBorder: "#ccc",
+  grayLight: "#d9d9d9",
+  footerGray: "#f0f0f0",
+  blue: "#0066cc",
+};
+
+const SPACING = {
+  xs: 5,
+  sm: 10,
+  md: 15,
+  lg: 20,
+  xl: 25,
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.white,
   },
 
   logoContainer: {
-    paddingTop: 15,
-    paddingHorizontal: 20,
+    paddingTop: SPACING.md,
+    paddingHorizontal: SPACING.lg,
   },
 
   logoImage: {
-    width: 120,
-    height: 60,
+    width: 70,
+    height: 50,
   },
 
   orangeLine: {
     height: 4,
-    backgroundColor: "#ef963f",
-    marginBottom: 20,
+    backgroundColor: COLORS.secondary,
+    marginBottom: SPACING.lg,
   },
 
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
-    paddingHorizontal: 20,
+    marginBottom: SPACING.lg,
+    paddingHorizontal: SPACING.lg,
   },
 
   hello: {
@@ -426,38 +366,41 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: "#ef7d00",
+    backgroundColor: COLORS.primary,
     paddingHorizontal: 18,
-    paddingVertical: 10,
+    paddingVertical: SPACING.sm,
     borderRadius: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
   },
 
   buttonText: {
-    color: "#fff",
+    color: COLORS.white,
     fontWeight: "bold",
   },
 
   filterContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#d9d9d9",
-    marginHorizontal: 20,
-    padding: 10,
+    backgroundColor: COLORS.grayLight,
+    marginHorizontal: SPACING.lg,
+    padding: SPACING.sm,
     borderRadius: 12,
-    marginBottom: 20,
+    marginBottom: SPACING.lg,
   },
 
   filterLabel: {
     fontSize: 18,
-    marginRight: 10,
+    marginRight: SPACING.sm,
   },
 
   filterButton: {
-    backgroundColor: "#e7a766",
+    backgroundColor: COLORS.filterButton,
     paddingHorizontal: 18,
     paddingVertical: 8,
     borderRadius: 12,
-    marginRight: 10,
+    marginRight: SPACING.sm,
   },
 
   filterButtonText: {
@@ -468,95 +411,57 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
+    paddingHorizontal: SPACING.lg,
   },
 
   smallCard: {
     width: "48%",
     minHeight: 140,
     borderRadius: 20,
-    padding: 20,
-    marginBottom: 15,
+    padding: SPACING.lg,
+    marginBottom: SPACING.md,
     justifyContent: "center",
     alignItems: "center",
     elevation: 3,
   },
 
   cardTitle: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 17,
     fontWeight: "bold",
     textAlign: "center",
   },
 
   cardValue: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 34,
     fontWeight: "bold",
     marginTop: 12,
   },
 
   cardSub: {
-    color: "#fff",
-    marginTop: 5,
+    color: COLORS.white,
+    marginTop: SPACING.xs,
     fontSize: 12,
   },
 
-  progressTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 10,
-    marginBottom: 5,
-    marginHorizontal: 20,
-  },
-
-  courseHours: {
-    textAlign: "right",
-    color: "#666",
-    marginBottom: 10,
-    marginHorizontal: 20,
-  },
-
-  progressBackground: {
-    height: 28,
-    backgroundColor: "#ddd",
-    borderRadius: 14,
-    overflow: "hidden",
-    marginHorizontal: 20,
-  },
-
-  progressFill: {
-    width: "45%",
-    height: "100%",
-    backgroundColor: "#005fa3",
-    borderRadius: 14,
-  },
-
-  progressNumbers: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
-    marginBottom: 25,
-    marginHorizontal: 20,
-  },
-
   warningBox: {
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.white,
     borderRadius: 15,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: "#e5e5e5",
-    marginHorizontal: 20,
-    marginBottom: 25,
+    borderColor: COLORS.borderLight,
+    marginHorizontal: SPACING.lg,
+    marginBottom: SPACING.xl,
   },
 
   warningHeader: {
-    backgroundColor: "#ef7d00",
+    backgroundColor: COLORS.primary,
     padding: 12,
   },
 
   warningHeaderText: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 18,
     fontWeight: "bold",
   },
@@ -565,62 +470,65 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 25,
-    paddingHorizontal: 15,
+    paddingVertical: SPACING.xl,
+    paddingHorizontal: SPACING.md,
     borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+    borderBottomColor: COLORS.border,
   },
 
   activityText: {
-    width: "35%",
+    flex: 1,
+    marginLeft: 10,
     fontSize: 10,
     fontWeight: "600",
   },
 
   statusText: {
-     width: "50%",
-     textAlign: "right",
-     fontSize: 9.9,
-     
+    flex: 1,
+    textAlign: "right",
+    fontSize: 9.9,
+    marginRight: 10,
   },
 
-  WarningFooter: {
+  warningFooter: {
     height: 50,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f0f0f0",
+    backgroundColor: COLORS.footerGray,
     borderTopWidth: 1,
-    borderTopColor: "#ffffff",
+    borderTopColor: COLORS.white,
   },
 
-  warningFooterArrow: {
-    fontSize: 22,
-    color: "#ffffff",
-  },
 
   dropdown: {
-  backgroundColor: "#fff",
-  marginHorizontal: 20,
-  borderWidth: 1,
-  borderColor: "#ccc",
-  marginTop: -15,
-  marginBottom: 15,
-},
+    backgroundColor: COLORS.white,
+    marginHorizontal: SPACING.lg,
+    borderWidth: 1,
+    borderColor: COLORS.dropdownBorder,
+    marginTop: -15,
+    marginBottom: SPACING.md,
+  },
 
-dropdownItem: {
-  padding: 15,
-  fontSize: 16,
-  borderBottomWidth: 1,
-  borderBottomColor: "#ffffff",
-},
+  dropdownItem: {
+    padding: SPACING.md,
+    fontSize: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.white,
+  },
 
-itemSelecionado: {
-  backgroundColor: "#efc08f",
-},
+  itemSelecionado: {
+    backgroundColor: COLORS.selectedItem,
+  },
 
-verMais: {
-  color: "#0066cc",
-  padding: 15,
-  fontSize: 16,
+  verMais: {
+    color: COLORS.blue,
+    padding: SPACING.md,
+    fontSize: 16,
+  },
+
+  filterContent: {
+  flexDirection: "row",
+  alignItems: "center",
+  gap: 4,
 },
 });
