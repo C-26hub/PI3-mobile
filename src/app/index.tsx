@@ -5,6 +5,7 @@ import { Link, router } from "expo-router";
 import { useState } from 'react';
 import { login as loginService } from '../services/authService';
 import { salvarUsuario } from '../services/authStorage';
+import * as SecureStore from 'expo-secure-store';
 
 export default function Home() {
 
@@ -15,6 +16,7 @@ export default function Home() {
 
   async function handleLogin() {
     setErro('');
+    setLoading(true);
 
     try {
       const response = await fetch('https://api-horas-complementares.onrender.com/api/auth/login', {
@@ -27,14 +29,20 @@ export default function Home() {
 
       if (!response.ok) {
         const errorData = await response.json();
+        setErro(errorData.error || errorData.erro || 'E-mail ou senha incorretos.');
+        setLoading(false);
+        return;
       }
 
       const data = await response.json();
-      router.push('/(tabs)/dashboard');
+      const usuarioParaSalvar = data.usuario || data; 
+      await SecureStore.setItemAsync('usuarioLogado', JSON.stringify(usuarioParaSalvar));
 
+      router.replace('/(tabs)/dashboard');
     } catch (error) {
       setErro('Erro ao tentar fazer login.');
       console.error(error);
+      setLoading(false);
     }
   }
 

@@ -15,7 +15,6 @@ import { useState } from "react";
 interface Props {
   visible: boolean;
   fechar: () => void;
-  // Agora a função proximo pede o JSON extraído
   proximo: (dadosExtraidos: any) => void;
 }
 
@@ -66,6 +65,8 @@ export default function UploadModal({ visible, fechar, proximo }: Props) {
       // Pega o texto da resposta e converte para objeto
       const jsonText = data.candidates[0].content.parts[0].text;
       const dadosExtraidos = JSON.parse(jsonText);
+
+      dadosExtraidos.uriDaImagem = file.uri;
 
       setLoading(false);
       proximo(dadosExtraidos);
