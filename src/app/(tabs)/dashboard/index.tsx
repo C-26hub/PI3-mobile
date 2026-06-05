@@ -11,10 +11,11 @@ export default function Dashboard() {
   const [modalCadastro, setModalCadastro] = useState(false);
   const [modalUpload, setModalUpload] = useState(false);
   const [modalSucesso, setModalSucesso] = useState(false);
+  const [dadosOcr, setDadosOcr] = useState({ titulo: "", horas: "", data: "", categoria: "" });
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Pressable style={styles.button} onPress={() => setModalCadastro(true)}>
+        <Pressable style={styles.button} onPress={() => setModalUpload(true)}>
           <Text style={styles.buttonText}>+ Nova Atividade</Text>
         </Pressable>
       </View>
@@ -68,19 +69,21 @@ export default function Dashboard() {
 
       <Button title="Ir para Home" onPress={() => router.replace("/")} />
 
-        <CadastroModal
-          visible={modalCadastro}
-          fechar={() => setModalCadastro(false)}
-          proximo={() => {setModalCadastro(false); setModalUpload(true)}}
-        />
-
         <UploadModal
           visible={modalUpload}
           fechar={() => setModalUpload(false)}
-          finalizar={() => {
+          proximo={(dados) => {
+            setDadosOcr(dados); // Guarda os dados que a IA enviou
             setModalUpload(false);
-            setModalSucesso(true)
+            setModalCadastro(true);
           }}
+        />
+
+        <CadastroModal
+          visible={modalCadastro}
+          dadosOcr={dadosOcr} // Passa os dados para o formulário
+          fechar={() => setModalCadastro(false)}
+          finalizar={() => {setModalCadastro(false); setModalSucesso(true)}}
         />
 
         <SucessoModal
