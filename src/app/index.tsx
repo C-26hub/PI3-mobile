@@ -3,6 +3,8 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import { Link, router } from "expo-router";
 import { useState } from 'react';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { login as loginService } from '../services/authService';
 import { salvarUsuario } from '../services/authStorage';
 import * as SecureStore from 'expo-secure-store';
@@ -47,58 +49,78 @@ export default function Home() {
   }
 
   return (
-    <View style={styles.container}>
-      <Image style={styles.logo} source={require('../../assets/Senac_logo.png')}/>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
 
-      <View style={styles.card}>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps='handled'
+      >
 
-        <StatusBar style="auto" />
+        <View style={styles.container}>
+          <Image style={styles.logo} source={require('../../assets/Senac_logo.png')} />
 
-        <Text style={styles.text}>
-          Informe seus dados para prosseguir
-        </Text>
+          <View style={styles.card}>
 
-        <TextInput
-          style={[styles.input, styles.marginTop]}
-          placeholder="Login"
-          placeholderTextColor="#999"
-          value={login}
-          onChangeText={setLogin}
-        />
+            <StatusBar style="auto" />
 
-        <TextInput
-          style={[styles.input, styles.marginBottom]}
-          placeholder="Senha"
-          placeholderTextColor="#999"
-          secureTextEntry
-          value={senha}
-          onChangeText={setSenha}
-        />
-
-        {erro ? (
-          <Text style={styles.erro}>
-            {erro}
-          </Text>
-        ) : null}
-
-        <TouchableOpacity style={[styles.botao, (!login || !senha || loading) && { opacity: 0.5 }]}
-        disabled={!login || !senha || loading}
-        onPress={handleLogin}>
-          {loading ? (
-            <ActivityIndicator color="#FFF" />
-          ) : (
-            <Text style={styles.textoBotao}>
-              Entrar
+            <Text style={styles.text}>
+              Informe seus dados para prosseguir
             </Text>
-          )}
-        </TouchableOpacity>
 
-        <Link href="/recuperacao-aluno" style={styles.link}>
-          Esqueci minha senha
-        </Link>
+            <View style={styles.inputContainer}>
+              <MaterialCommunityIcons name="account" size={22} color="#999" />
 
-      </View>
-    </View>
+              <TextInput
+                style={styles.input}
+                placeholder="Login"
+                placeholderTextColor="#999"
+                value={login}
+                onChangeText={setLogin}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <MaterialCommunityIcons name="lock" size={22} color="#999" />
+
+              <TextInput
+                style={styles.input}
+                placeholder="Senha"
+                placeholderTextColor="#999"
+                secureTextEntry
+                value={senha}
+                onChangeText={setSenha}
+              />
+            </View>
+
+            {erro ? (
+              <Text style={styles.erro}>
+                {erro}
+              </Text>
+            ) : null}
+
+            <TouchableOpacity style={[styles.botao, (!login || !senha || loading) && { opacity: 0.5 }]}
+              disabled={!login || !senha || loading}
+              onPress={handleLogin}>
+              {loading ? (
+                <ActivityIndicator color="#FFF" />
+              ) : (
+                <Text style={styles.textoBotao}>
+                  Entrar
+                </Text>
+              )}
+            </TouchableOpacity>
+
+            <Link href="/recuperacao-aluno" style={styles.link}>
+              Esqueci minha senha
+            </Link>
+
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -128,8 +150,8 @@ const styles = StyleSheet.create({
     width: 100,
     height: 60,
     margin: 20,
-    marginBottom: 150,
-    marginTop: 100,
+    marginBottom: 140,
+    marginTop: 120,
   },
 
   link: {
@@ -138,15 +160,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  input: {
-    width: '100%',
-    height: 42,
-    backgroundColor: '#F5F5F5',
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
-    borderColor: '#999',
-    borderRadius: 6,
-    paddingHorizontal: 10,
-    marginBottom: 20,
+    borderColor: "#ccc",
+    borderRadius: 50,
+    paddingHorizontal: 20,
+    height: 50,
+    marginTop: 10,
+  },
+
+  input: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 16,
   },
 
   marginTop: {
@@ -161,9 +189,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#F28322',
     width: '100%',
     paddingVertical: 12,
-    borderRadius: 10,
+    borderRadius: 50,
     alignItems: 'center',
-    marginTop: 15,
+    marginTop: 30,
   },
 
   textoBotao: {
