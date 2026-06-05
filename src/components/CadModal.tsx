@@ -1,93 +1,82 @@
-import {Modal, View,Text,TouchableOpacity,TextInput,ScrollView,StyleSheet,} from "react-native";
+import { Modal, View, Text, TouchableOpacity, TextInput, ScrollView, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useState, useEffect } from "react";
 
 interface Props {
   visible: boolean;
   fechar: () => void;
-  proximo: () => void;
+  finalizar: () => void;
+  // Recebe os dados como prop
+  dadosOcr: { titulo: string; categoria: string; data: string; horas: string };
 }
 
-export default function CadModal({
-  visible,
-  fechar,
-  proximo,
-}: Props) {
+export default function CadModal({ visible, fechar, finalizar, dadosOcr }: Props) {
+  // Cria estados para os inputs
+  const [titulo, setTitulo] = useState("");
+  const [categoria, setCategoria] = useState("");
+  const [data, setData] = useState("");
+  const [horas, setHoras] = useState("");
+  const [descricao, setDescricao] = useState("");
+
+  // Quando o modal abre ou os dados mudam, preenche os inputs
+  useEffect(() => {
+    if (visible && dadosOcr) {
+      setTitulo(dadosOcr.titulo || "");
+      setCategoria(dadosOcr.categoria || "");
+      setData(dadosOcr.data || "");
+      setHoras(dadosOcr.horas || "");
+    }
+  }, [visible, dadosOcr]);
+
   return (
     <Modal visible={visible} animationType="slide">
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={fechar}>
-            <Ionicons
-              name="arrow-back"
-              size={24}
-              color="#fff"
-            />
-          </TouchableOpacity>
+        {/* ... Header igualzinho ao que tinhas ... */}
 
-          <Text style={styles.titulo}>
-            Nova Atividade
-          </Text>
-        </View>
-
-        <Text style={styles.label}>
-          Título da Atividade
-        </Text>
-
-        <TextInput
-          style={styles.input}
-          placeholder="Ex: Curso de React"
+        <Text style={styles.label}>Título da Atividade</Text>
+        <TextInput 
+          style={styles.input} 
+          value={titulo} 
+          onChangeText={setTitulo} 
         />
 
-        <Text style={styles.label}>
-          Categoria
-        </Text>
-
-        <TextInput
-          style={styles.input}
-          placeholder="Selecione"
+        <Text style={styles.label}>Categoria</Text>
+        <TextInput 
+          style={styles.input} 
+          value={categoria} 
+          onChangeText={setCategoria} 
         />
 
         <View style={styles.row}>
           <View style={styles.metade}>
-            <Text style={styles.label}>
-              Data
-            </Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="00/00/0000"
+            <Text style={styles.label}>Data</Text>
+            <TextInput 
+              style={styles.input} 
+              value={data} 
+              onChangeText={setData} 
             />
           </View>
 
           <View style={styles.metade}>
-            <Text style={styles.label}>
-              Horas
-            </Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="00h"
+            <Text style={styles.label}>Horas</Text>
+            <TextInput 
+              style={styles.input} 
+              value={horas} 
+              onChangeText={setHoras} 
             />
           </View>
         </View>
 
-        <Text style={styles.label}>
-          Descrição
-        </Text>
-
-        <TextInput
-          style={styles.textArea}
-          multiline
-          placeholder="Digite..."
+        <Text style={styles.label}>Descrição</Text>
+        <TextInput 
+          style={styles.textArea} 
+          multiline 
+          value={descricao} 
+          onChangeText={setDescricao} 
         />
 
-        <TouchableOpacity
-          style={styles.botao}
-          onPress={proximo}
-        >
-          <Text style={styles.textoBotao}>
-            Próximo
-          </Text>
+        <TouchableOpacity style={styles.botao} onPress={finalizar}>
+          <Text style={styles.textoBotao}>Próximo</Text>
         </TouchableOpacity>
       </ScrollView>
     </Modal>
