@@ -1,0 +1,6 @@
+{
+  "plugins": [
+    "expo-mlkit-ocr",
+    "expo-secure-store"
+  ]
+}
