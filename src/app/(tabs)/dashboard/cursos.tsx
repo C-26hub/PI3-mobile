@@ -10,16 +10,21 @@ import { Ionicons } from "@expo/vector-icons";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system/legacy";
 import { useState } from "react";
+import * as SecureStore from 'expo-secure-store';
 
 import CadModal from "../../../components/CadModal";
+
+// Defina a URL base da sua API
+const API_BASE_URL = "https://api-horas-complementares.onrender.com";
+
+// Chave da IA
+const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
 
 export default function Cursos() {
   const [loading, setLoading] = useState(false);
   const [cadVisible, setCadVisible] = useState(false);
   const [dadosCompartilhados, setDadosCompartilhados] = useState<any>(null);
-
-  const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
-
+  const [arquivoFisico, setArquivoFisico] = useState<any>(null);
 
   const handleUploadAndOCR = async () => {
     try {
@@ -31,6 +36,7 @@ export default function Cursos() {
       if (result.canceled) return;
 
       const file = result.assets[0];
+      setArquivoFisico(file); // Guarda o arquivo para o envio final ao backend
       setLoading(true);
 
       const base64Image = await FileSystem.readAsStringAsync(file.uri, {
@@ -63,28 +69,25 @@ export default function Cursos() {
         },
       );
 
-      const data = await response.json();
+      const textResponse = await response.text();
 
       if (!response.ok) {
-        throw new Error(data.error?.message || "Erro na API do Gemini");
+        throw new Error("Erro na API do Gemini");
       }
 
+      const data = JSON.parse(textResponse);
       const jsonText = data.candidates[0].content.parts[0].text;
       const dadosExtraidos = JSON.parse(jsonText);
 
       if (dadosExtraidos.categoria) {
         let catTratada = dadosExtraidos.categoria.toUpperCase().trim();
-
         if (catTratada === "EXTENSÃO" || catTratada === "EXTENSAO") {
           catTratada = "EXTENSAO";
         }
-
         const categoriasValidas = ["ENSINO", "EXTENSAO", "PESQUISA"];
-        
         if (!categoriasValidas.includes(catTratada)) {
           catTratada = "ENSINO";
         }
-
         dadosExtraidos.categoria = catTratada;
       } else {
         dadosExtraidos.categoria = "ENSINO";
@@ -94,14 +97,79 @@ export default function Cursos() {
 
       setLoading(false);
       setDadosCompartilhados(dadosExtraidos);
-      setCadVisible(true); 
+      setCadVisible(true);
     } catch (error: any) {
-      console.error("ERRO COMPLETO NO PROCESSO:", error);
+      console.error("ERRO NO OCR:", error);
       setLoading(false);
       Alert.alert(
-        "Erro",
-        "Não foi possível ler os dados do certificado automaticamente.",
+        "Aviso",
+        "Não foi possível ler os dados automaticamente. Você precisará preencher manualmente.",
       );
+      // Se a IA falhar, ainda abrimos o modal para preenchimento manual, passando dados vazios
+      setDadosCompartilhados({ titulo: "", horas: "", data: "", categoria: "ENSINO" });
+      setCadVisible(true);
+    }
+  };
+
+  // 🔥 Nova função: Integração com o Backend Node.js
+  const handleSalvarNoServidor = async (dadosFinaisDoFormulario: any) => {
+    try {
+      setLoading(true);
+      const token = await SecureStore.getItemAsync('userToken');
+
+      if (!token) {
+        Alert.alert("Acesso Negado", "Sessão expirada. Faça login novamente.");
+        setLoading(false);
+        return;
+      }
+
+      const formData = new FormData();
+      
+      if (arquivoFisico) {
+        formData.append("comprovante", {
+          uri: arquivoFisico.uri,
+          name: arquivoFisico.name || `certificado_${Date.now()}.jpg`,
+          type: arquivoFisico.mimeType || "image/jpeg",
+        } as any);
+      }
+
+      formData.append("titulo", dadosFinaisDoFormulario.titulo);
+      formData.append("categoria", dadosFinaisDoFormulario.categoria);
+      formData.append("cargaHoraria", String(dadosFinaisDoFormulario.horas));
+      formData.append("dataInicio", dadosFinaisDoFormulario.data); 
+      formData.append("descricao", dadosFinaisDoFormulario.descricao || "Enviado via OCR Mobile");
+
+      const response = await fetch(`${API_BASE_URL}/api/aluno-portal/solicitacoes`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Accept": "application/json",
+          // O fetch cuida do multipart boundary automaticamente
+        },
+        body: formData,
+      });
+
+      const resText = await response.text();
+
+      if (!response.ok) {
+        let erroMsg = "Erro ao salvar no banco de dados.";
+        try {
+          const parsed = JSON.parse(resText);
+          erroMsg = parsed.error || erroMsg;
+        } catch {
+           erroMsg = `Erro do servidor: ${resText}`;
+        }
+        throw new Error(erroMsg);
+      }
+
+      Alert.alert("Sucesso!", "Sua atividade foi enviada para análise.");
+      setCadVisible(false);
+
+    } catch (error: any) {
+      console.error("ERRO AO SALVAR:", error);
+      Alert.alert("Erro de Envio", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -123,13 +191,8 @@ export default function Cursos() {
           {loading ? (
             <View style={{ alignItems: "center" }}>
               <ActivityIndicator size="large" color="#0B5AA2" />
-              <Text
-                style={[
-                  styles.textoUpload,
-                  { marginTop: 10, color: "#0B5AA2" },
-                ]}
-              >
-                Processando IA...
+              <Text style={[styles.textoUpload, { marginTop: 10, color: "#0B5AA2" }]}>
+                Processando...
               </Text>
             </View>
           ) : (
@@ -144,7 +207,7 @@ export default function Cursos() {
       <CadModal
         visible={cadVisible}
         fechar={() => setCadVisible(false)}
-        finalizar={() => setCadVisible(false)}
+        finalizar={(dados) => handleSalvarNoServidor(dados)} 
         dadosOcr={dadosCompartilhados}
       />
     </View>
