@@ -37,7 +37,6 @@ export default function Home() {
         },
       );
 
-      // 👇 BLINDAGEM: Lê o texto puro primeiro para não quebrar com a letra "N"
       const textoBruto = await response.text();
 
       if (!response.ok) {
@@ -54,7 +53,6 @@ export default function Home() {
         return;
       }
 
-      // Se passou do IF, o textoBruto é um JSON válido de sucesso
       const data = JSON.parse(textoBruto);
 
       const usuarioParaSalvar = data.usuario || data;
