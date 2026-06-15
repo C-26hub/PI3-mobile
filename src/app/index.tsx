@@ -10,10 +10,10 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Link, router } from "expo-router";
-import { useState } from 'react';
-import { login as loginService } from '../services/authService';
-import { salvarUsuario } from '../services/authStorage';
-import * as SecureStore from 'expo-secure-store';
+import { useState } from "react";
+import { login as loginService } from "../services/authService";
+import { salvarUsuario } from "../services/authStorage";
+import * as SecureStore from "expo-secure-store";
 
 export default function Home() {
   const [login, setLogin] = useState("");
@@ -22,12 +22,12 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   async function handleLogin() {
-    setErro('');
+    setErro("");
     setLoading(true);
 
     try {
       const response = await fetch(
-        "https://api-horas-complementares.onrender.com/api/auth/login",
+        "https://api-horas-complementares.onrender.com/api/auth/login", // 👈 URL corrigida (horas)
         {
           method: "POST",
           headers: {
@@ -37,21 +37,42 @@ export default function Home() {
         },
       );
 
+      // 👇 BLINDAGEM: Lê o texto puro primeiro para não quebrar com a letra "N"
+      const textoBruto = await response.text();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        setErro(errorData.error || errorData.erro || 'E-mail ou senha incorretos.');
+        let mensagemErro = "E-mail ou senha incorretos.";
+        try {
+          const errorData = JSON.parse(textoBruto);
+          mensagemErro = errorData.error || errorData.erro || mensagemErro;
+        } catch {
+          mensagemErro = `Erro do servidor: ${textoBruto}`; // Se for Not Found, exibe sem quebrar
+        }
+
+        setErro(mensagemErro);
         setLoading(false);
         return;
       }
 
-      const data = await response.json();
-      const usuarioParaSalvar = data.usuario || data; 
-      await SecureStore.setItemAsync('usuarioLogado', JSON.stringify(usuarioParaSalvar));
+      // Se passou do IF, o textoBruto é um JSON válido de sucesso
+      const data = JSON.parse(textoBruto);
 
-      router.replace('/(tabs)/dashboard');
+      const usuarioParaSalvar = data.usuario || data;
+      await SecureStore.setItemAsync(
+        "usuarioLogado",
+        JSON.stringify(usuarioParaSalvar),
+      );
+
+      if (data.token) {
+        await SecureStore.setItemAsync("userToken", data.token);
+      } else if (data.usuario?.token) {
+        await SecureStore.setItemAsync("userToken", data.usuario.token);
+      }
+
+      router.replace("/(tabs)/dashboard");
     } catch (error) {
-      setErro("Erro ao tentar fazer login.");
-      console.error(error);
+      setErro("Erro de conexão. Verifique sua internet.");
+      console.error("Erro no login:", error);
       setLoading(false);
     }
   }
