@@ -1,405 +1,288 @@
-
 import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
   Text,
   View,
-  Button,
   ScrollView,
   Pressable,
   Image,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import * as SecureStore from "expo-secure-store";
 
-import CadastroModal from "../../../components/CadModal";
-import SucessoModal from "../../../components/SucessModal";
+const API_BASE_URL = "https://api-horas-complementares.onrender.com";
 
 export default function Dashboard() {
-  const [modalCadastro, setModalCadastro] = useState(false);
-  const [modalUpload, setModalUpload] = useState(false);
-  const [modalSucesso, setModalSucesso] = useState(false);
-  const [dadosOcr, setDadosOcr] = useState({ titulo: "", horas: "", data: "", categoria: "" });
-  const [mostrarCursos, setMostrarCursos] = useState(false);
-  const [mostrarCategorias, setMostrarCategorias] = useState(false);
-  const [cursoSelecionado, setCursoSelecionado] = useState<string | null>(null);
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [nomeAluno, setNomeAluno] = useState("Aluno");
 
+  const [metricas, setMetricas] = useState({
+    aprovadas: 0,
+    emAnalise: 0,
+    rejeitadas: 0,
+    meta: 100,
+  });
+
+  const [atividadesRecentes, setAtividadesRecentes] = useState<any[]>([]);
+
+  useEffect(() => {
+    carregarDadosDoDashboard();
+  }, []);
+
+  async function carregarDadosDoDashboard() {
+    try {
+      setLoading(true);
+      const token = await SecureStore.getItemAsync("userToken");
+
+      if (!token) {
+        router.replace("/");
+        return;
+      }
+
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      };
+
+      const resDashboard = await fetch(
+        `${API_BASE_URL}/api/aluno-portal/dashboard`,
+        { headers },
+      );
+
+      const resSolicitacoes = await fetch(
+        `${API_BASE_URL}/api/aluno-portal/solicitacoes?ordenarData=desc`,
+        { headers },
+      );
+
+      if (resDashboard.ok) {
+        const dataDash = await resDashboard.json();
+
+        if (dataDash.aluno?.nome) {
+          setNomeAluno(dataDash.aluno.nome.split(" ")[0]); 
+        }
+
+        setMetricas({
+          aprovadas: dataDash.cards?.horasAprovadas || 0,
+          emAnalise: dataDash.cards?.horasEmAnalise || 0,
+          rejeitadas: dataDash.cards?.horasRejeitadas || 0,
+          meta: dataDash.progresso?.limiteHoras || 100,
+        });
+      }
+
+      if (resSolicitacoes.ok) {
+        const dataSol = await resSolicitacoes.json();
+
+        const ultimas = dataSol.solicitacoes
+          ? dataSol.solicitacoes.slice(0, 3)
+          : [];
+        setAtividadesRecentes(ultimas);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar dashboard:", error);
+      Alert.alert(
+        "Erro",
+        "Não foi possível carregar as informações do servidor.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const horasFaltantes = Math.max(0, metricas.meta - metricas.aprovadas);
+  const progressoPercentual =
+    metricas.meta > 0
+      ? Math.min(100, (metricas.aprovadas / metricas.meta) * 100)
+      : 0;
+
+  const getStatusVisual = (status: string) => {
+    switch (status) {
+      case "APROVADA":
+        return { cor: "#18b84f", texto: "Atividade aprovada" };
+      case "REJEITADA":
+        return { cor: "#ef4444", texto: "Atividade rejeitada" };
+      case "PENDENTE":
+        return { cor: "#ef963f", texto: "Em análise" };
+      default:
+        return { cor: "#999", texto: status };
+    }
+  };
+
+  if (loading) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <ActivityIndicator size="large" color="#ef7d00" />
+        <Text style={{ marginTop: 10, color: "#666" }}>
+          Carregando seu painel...
+        </Text>
+      </View>
+    );
+  }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <StatusBar style="dark" />
 
-      {/* Logo */}
-      <View style={styles.logoContainer}>
-        <Image
-          source={{ uri: "https://via.placeholder.com/120x60.png?text=Logo" }}
-          style={styles.logoImage}
-          resizeMode="contain"
-        />
-      </View>
-
-      {/* Linha Laranja */}
       <View style={styles.orangeLine} />
 
-      {/* Header */}
+      <View style={styles.topBar}>
+        <View style={styles.logoContainer}>
+          <Image
+            style={styles.logo}
+            source={require("../../../../assets/Senac_logo.png")}
+            resizeMode="contain"
+          />
+        </View>
+      </View>
+
       <View style={styles.header}>
-        <Text style={styles.hello}>
-          Olá, Filipe Xavier 👋
-        </Text>
-
-        <Pressable style={styles.button} onPress={() => setModalUpload(true)}>
-          <Text style={styles.buttonText}>
-            + Nova Atividade
-          </Text>
-        </Pressable>
+        <Text style={styles.hello}>Olá, {nomeAluno} 👋</Text>
       </View>
 
-      {/* Filtros */}
-      <View style={styles.filterContainer}>
-
-        <Text style={styles.filterLabel}>
-           Filtro:
-        </Text>
-
-        <Pressable
-          style={styles.filterButton}
-          onPress={() => {
-            setMostrarCursos(!mostrarCursos);
-            setMostrarCategorias(false);
-          }}
-        >
-          <Text style={styles.filterButtonText}>
-            Curso ▼
-          </Text>
-        </Pressable>
-
-        <Pressable
-          style={styles.filterButton}
-          onPress={() => {
-            setMostrarCategorias(!mostrarCategorias);
-            setMostrarCursos(false);
-          }}
-        >
-          <Text style={styles.filterButtonText}>
-            Categoria ▼
-          </Text>
-        </Pressable>
-
-      </View>
-
-      {mostrarCursos && (
-  <View style={styles.dropdown}>
-
-    <Pressable
-      onPress={() => {
-        setCursoSelecionado(
-          "Análise e Desenvolvimento de Sistemas"
-        );
-        setMostrarCursos(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          cursoSelecionado ===
-            "Análise e Desenvolvimento de Sistemas" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Análise e Desenvolvimento de Sistemas
-      </Text>
-    </Pressable>
-
-    <Pressable
-      onPress={() => {
-        setCursoSelecionado("Biomedicina");
-        setMostrarCursos(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          cursoSelecionado === "Biomedicina" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Biomedicina
-      </Text>
-    </Pressable>
-
-    <Pressable
-      onPress={() => {
-        setCursoSelecionado("Gastronomia");
-        setMostrarCursos(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          cursoSelecionado === "Gastronomia" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Gastronomia
-      </Text>
-    </Pressable>
-
-    <Pressable
-      onPress={() => {
-        setCursoSelecionado("Jogos Digitais");
-        setMostrarCursos(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          cursoSelecionado === "Jogos Digitais" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Jogos Digitais
-      </Text>
-    </Pressable>
-
-    <Pressable
-      onPress={() => {
-        setCursoSelecionado("Moda");
-        setMostrarCursos(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          cursoSelecionado === "Moda" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Moda
-      </Text>
-    </Pressable>
-
-    <Text style={styles.verMais}>
-      Ver Mais...
-    </Text>
-
-  </View>
-)}
-
-{mostrarCategorias && (
-  <View style={styles.dropdown}>
-
-    <Pressable
-      onPress={() => {
-        setCategoriaSelecionada("Pesquisa");
-        setMostrarCategorias(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          categoriaSelecionada === "Pesquisa" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Pesquisa
-      </Text>
-    </Pressable>
-
-    <Pressable
-      onPress={() => {
-        setCategoriaSelecionada("Extensão");
-        setMostrarCategorias(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          categoriaSelecionada === "Extensão" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Extensão
-      </Text>
-    </Pressable>
-
-    <Pressable
-      onPress={() => {
-        setCategoriaSelecionada("Ensino");
-        setMostrarCategorias(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          categoriaSelecionada === "Ensino" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Ensino
-      </Text>
-    </Pressable>
-
-    <Pressable
-      onPress={() => {
-        setCategoriaSelecionada("Geral");
-        setMostrarCategorias(false);
-      }}
-    >
-      <Text
-        style={[
-          styles.dropdownItem,
-          categoriaSelecionada === "Geral" &&
-            styles.itemSelecionado,
-        ]}
-      >
-        Geral
-      </Text>
-    </Pressable>
-
-  </View>
-)}
-
-      {/* Cards */}
       <View style={styles.cardsContainer}>
-
-        <View
-          style={[
-            styles.smallCard,
-            { backgroundColor: "#18b84f" },
-          ]}
-        >
-          <Text style={styles.cardTitle}>
-            Horas Aprovadas
+        <View style={styles.modernCard}>
+          <View
+            style={[
+              styles.iconBox,
+              { backgroundColor: "rgba(24, 184, 79, 0.15)" },
+            ]}
+          >
+            <Ionicons name="checkmark-circle" size={24} color="#18b84f" />
+          </View>
+          <Text style={[styles.cardValue, { color: "#18b84f" }]}>
+            {metricas.aprovadas}h
           </Text>
-
-          <Text style={styles.cardValue}>
-            45h
-          </Text>
+          <Text style={styles.cardTitle}>Aprovadas</Text>
         </View>
 
-        <View
-          style={[
-            styles.smallCard,
-            { backgroundColor: "#ef963f" },
-          ]}
-        >
-          <Text style={styles.cardTitle}>
-            Horas em análise
+        <View style={styles.modernCard}>
+          <View
+            style={[
+              styles.iconBox,
+              { backgroundColor: "rgba(239, 150, 63, 0.15)" },
+            ]}
+          >
+            <Ionicons name="time" size={24} color="#ef963f" />
+          </View>
+          <Text style={[styles.cardValue, { color: "#ef963f" }]}>
+            {metricas.emAnalise}h
           </Text>
-
-          <Text style={styles.cardValue}>
-            60h
-          </Text>
+          <Text style={styles.cardTitle}>Em análise</Text>
         </View>
 
-        <View
-          style={[
-            styles.smallCard,
-            { backgroundColor: "#ef4444" },
-          ]}
-        >
-          <Text style={styles.cardTitle}>
-            Horas rejeitadas
+        <View style={styles.modernCard}>
+          <View
+            style={[
+              styles.iconBox,
+              { backgroundColor: "rgba(239, 68, 68, 0.15)" },
+            ]}
+          >
+            <Ionicons name="close-circle" size={24} color="#ef4444" />
+          </View>
+          <Text style={[styles.cardValue, { color: "#ef4444" }]}>
+            {metricas.rejeitadas}h
           </Text>
-
-          <Text style={styles.cardValue}>
-            20h
-          </Text>
+          <Text style={styles.cardTitle}>Rejeitadas</Text>
         </View>
 
-        <View
-          style={[
-            styles.smallCard,
-            { backgroundColor: "#0066cc" },
-          ]}
-        >
-          <Text style={styles.cardTitle}>
-            Horas Faltantes
+        <View style={styles.modernCard}>
+          <View
+            style={[
+              styles.iconBox,
+              { backgroundColor: "rgba(0, 102, 204, 0.15)" },
+            ]}
+          >
+            <Ionicons name="flag" size={22} color="#0066cc" />
+          </View>
+          <Text style={[styles.cardValue, { color: "#0066cc" }]}>
+            {horasFaltantes}h
           </Text>
-
-          <Text style={styles.cardValue}>
-            55h
-          </Text>
-
-          <Text style={styles.cardSub}>
-            de 100h exigidas
-          </Text>
+          <Text style={styles.cardTitle}>Faltantes</Text>
+          <Text style={styles.cardSub}>Meta: {metricas.meta}h</Text>
         </View>
-
       </View>
 
-      <Text style={styles.progressTitle}>
-        Barra de progresso
-      </Text>
-
-    
-
-      <View style={styles.progressBackground}>
-        <View style={styles.progressFill} />
-      </View>
-
-      <View style={styles.progressNumbers}>
-        <Text>45h</Text>
-        <Text>100h</Text>
+      <View style={styles.progressSection}>
+        <Text style={styles.sectionTitle}>Progresso Geral</Text>
+        <View style={styles.progressBackground}>
+          <View
+            style={[styles.progressFill, { width: `${progressoPercentual}%` }]}
+          />
+        </View>
+        <View style={styles.progressNumbers}>
+          <Text style={styles.progressTextDark}>
+            {metricas.aprovadas}h validadas
+          </Text>
+          <Text style={styles.progressTextLight}>
+            {metricas.meta}h exigidas
+          </Text>
+        </View>
       </View>
 
       <View style={styles.warningBox}>
-
         <View style={styles.warningHeader}>
-          <Text style={styles.warningHeaderText}>
-            🔔 Avisos
-          </Text>
+          <Ionicons
+            name="notifications"
+            size={18}
+            color="#fff"
+            style={{ marginRight: 8 }}
+          />
+          <Text style={styles.warningHeaderText}>Avisos Recentes</Text>
         </View>
 
-        <View style={styles.tableRow}>
-          <Text style={styles.activityText}>
-            Monitoria em Design UI/UX (15h)
-          </Text>
-
-          <Text style={styles.statusText}>
-            Sua atividade foi aprovada 
-          </Text>
+        <View style={styles.warningContent}>
+          {atividadesRecentes.length === 0 ? (
+            <Text style={{ padding: 15, textAlign: "center", color: "#888" }}>
+              Nenhuma atividade recente.
+            </Text>
+          ) : (
+            atividadesRecentes.map((atividade) => {
+              const visual = getStatusVisual(atividade.status);
+              return (
+                <View key={atividade.id} style={styles.warningRow}>
+                  <View
+                    style={[styles.statusDot, { backgroundColor: visual.cor }]}
+                  />
+                  <View style={styles.warningTexts}>
+                    <Text style={styles.activityText} numberOfLines={1}>
+                      {atividade.titulo} ({atividade.cargaHoraria}h)
+                    </Text>
+                    <Text style={styles.statusText}>{visual.texto}</Text>
+                  </View>
+                </View>
+              );
+            })
+          )}
         </View>
 
-        <View style={styles.tableRow}>
-          <Text style={styles.activityText}>
-            Curso de Javascript (5h)
-          </Text>
-
-          <Text style={styles.statusText}>
-            Atividade rejeitada: faltou comprovante
-          </Text>
-        </View>
-
-        <View style={styles.tableRow}>
-          <Text style={styles.activityText}>
-            SQL week Recife Conference (10h)
-          </Text>
-
-          <Text style={styles.statusText}>
-            Sua atividade está em análise 
-          </Text>
-        </View>
-
-        <View style={styles.WarningFooter}>
-          <Text style={styles.warningFooterArrow}>  </Text>
-        </View>
-
+        <Pressable
+          style={styles.seeAllButton}
+          onPress={() => router.push("/(tabs)/historico")} // Rota para a sua tela de histórico
+        >
+          <Text style={styles.seeAllText}>Ver Histórico Completo</Text>
+          <Ionicons name="arrow-forward" size={14} color="#0066cc" />
+        </Pressable>
       </View>
 
-      <Button title="Ir para Home" onPress={() => router.replace("/")} />
-
-        <CadastroModal
-          visible={modalCadastro}
-          dadosOcr={dadosOcr} // Passa os dados para o formulário
-          fechar={() => setModalCadastro(false)}
-          finalizar={() => {setModalCadastro(false); setModalSucesso(true)}}
-        />
-
-        <SucessoModal
-          visible={modalSucesso}
-          fechar={() => setModalSucesso(false)}
-        />
+      <View style={{ marginHorizontal: 20, marginBottom: 40, marginTop: 10 }}>
+        <Pressable
+          style={styles.logoutButton}
+          onPress={async () => {
+            await SecureStore.deleteItemAsync("userToken");
+            router.replace("/");
+          }}
+        >
+          <Text style={styles.logoutButtonText}>Sair</Text>
+        </Pressable>
+      </View>
     </ScrollView>
   );
 }
@@ -407,234 +290,211 @@ export default function Dashboard() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#F8F9FA",
   },
-
-  logoContainer: {
-    paddingTop: 15,
-    paddingHorizontal: 20,
-  },
-
-  logoImage: {
-    width: 120,
-    height: 60,
-  },
-
   orangeLine: {
     height: 4,
-    backgroundColor: "#ef963f",
-    marginBottom: 20,
+    backgroundColor: "#ef7d00",
+    width: "100%",
   },
-
-  header: {
+  topBar: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
     paddingHorizontal: 20,
+    paddingTop: 15,
+    paddingBottom: 10,
   },
-
-  hello: {
-    fontSize: 20,
-    fontWeight: "bold",
+  logoContainer: {},
+  logoImage: {
+    width: 80,
+    height: 40,
   },
-
-  button: {
+  logo: {
+    width: 100,
+    height: 48,
+  },
+  buttonAction: {
+    flexDirection: "row",
     backgroundColor: "#ef7d00",
-    paddingHorizontal: 18,
+    paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 20,
+    borderRadius: 25,
+    alignItems: "center",
+    elevation: 3,
   },
-
-  buttonText: {
+  buttonActionText: {
     color: "#fff",
     fontWeight: "bold",
+    fontSize: 13,
   },
-
-  filterContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#d9d9d9",
-    marginHorizontal: 20,
-    padding: 10,
-    borderRadius: 12,
-    marginBottom: 20,
+  header: {
+    paddingHorizontal: 20,
+    marginTop: 10,
+    marginBottom: 25,
   },
-
-  filterLabel: {
-    fontSize: 18,
-    marginRight: 10,
+  hello: {
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#1A1A1A",
   },
-
-  filterButton: {
-    backgroundColor: "#e7a766",
-    paddingHorizontal: 18,
-    paddingVertical: 8,
-    borderRadius: 12,
-    marginRight: 10,
+  subHello: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 4,
   },
-
-  filterButtonText: {
-    fontWeight: "bold",
-  },
-
   cardsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
     paddingHorizontal: 20,
+    marginBottom: 10,
   },
-
-  smallCard: {
+  modernCard: {
     width: "48%",
-    minHeight: 140,
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 15,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 18,
+    marginBottom: 16,
+    elevation: 2,
+  },
+  iconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 3,
+    marginBottom: 12,
   },
-
-  cardTitle: {
-    color: "#fff",
-    fontSize: 17,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-
   cardValue: {
-    color: "#fff",
-    fontSize: 34,
-    fontWeight: "bold",
-    marginTop: 12,
+    fontSize: 28,
+    fontWeight: "800",
+    marginBottom: 4,
   },
-
-  cardSub: {
-    color: "#fff",
-    marginTop: 5,
-    fontSize: 12,
-  },
-
-  progressTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 10,
-    marginBottom: 5,
-    marginHorizontal: 20,
-  },
-
-  courseHours: {
-    textAlign: "right",
+  cardTitle: {
+    fontSize: 13,
     color: "#666",
-    marginBottom: 10,
-    marginHorizontal: 20,
+    fontWeight: "600",
   },
-
+  cardSub: {
+    fontSize: 11,
+    color: "#999",
+    marginTop: 4,
+  },
+  progressSection: {
+    backgroundColor: "#fff",
+    marginHorizontal: 20,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 25,
+    elevation: 2,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#333",
+    marginBottom: 15,
+  },
   progressBackground: {
-    height: 28,
-    backgroundColor: "#ddd",
-    borderRadius: 14,
+    height: 12,
+    backgroundColor: "#Eef2f6",
+    borderRadius: 6,
     overflow: "hidden",
-    marginHorizontal: 20,
   },
-
   progressFill: {
-    width: "45%",
     height: "100%",
-    backgroundColor: "#005fa3",
-    borderRadius: 14,
+    backgroundColor: "#0B5AA2",
+    borderRadius: 6,
   },
-
   progressNumbers: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 10,
-    marginBottom: 25,
-    marginHorizontal: 20,
   },
-
+  progressTextDark: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#0B5AA2",
+  },
+  progressTextLight: {
+    fontSize: 13,
+    color: "#888",
+    fontWeight: "500",
+  },
   warningBox: {
     backgroundColor: "#fff",
-    borderRadius: 15,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "#e5e5e5",
+    borderRadius: 16,
     marginHorizontal: 20,
     marginBottom: 25,
+    overflow: "hidden",
+    elevation: 2,
   },
-
   warningHeader: {
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#ef7d00",
-    padding: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
   },
-
   warningHeaderText: {
     color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
+    fontSize: 16,
+    fontWeight: "700",
   },
-
-  tableRow: {
+  warningContent: {
+    padding: 10,
+  },
+  warningRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 25,
-    paddingHorizontal: 15,
+    alignItems: "flex-start",
+    paddingVertical: 15,
+    paddingHorizontal: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+    borderBottomColor: "#F0F0F0",
   },
-
+  statusDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginTop: 5,
+    marginRight: 15,
+  },
+  warningTexts: {
+    flex: 1,
+  },
   activityText: {
-    width: "35%",
-    fontSize: 10,
-    fontWeight: "600",
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#333",
+    marginBottom: 4,
   },
-
   statusText: {
-     width: "50%",
-     textAlign: "right",
-     fontSize: 9.9,
-     
+    fontSize: 12,
+    color: "#777",
   },
-
-  WarningFooter: {
-    height: 50,
+  seeAllButton: {
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f0f0f0",
-    borderTopWidth: 1,
-    borderTopColor: "#ffffff",
+    gap: 8,
+    paddingVertical: 15,
+    backgroundColor: "#FAFAFA",
   },
-
-  warningFooterArrow: {
-    fontSize: 22,
-    color: "#ffffff",
+  seeAllText: {
+    color: "#0066cc",
+    fontSize: 13,
+    fontWeight: "700",
   },
-
-  dropdown: {
-  backgroundColor: "#fff",
-  marginHorizontal: 20,
-  borderWidth: 1,
-  borderColor: "#ccc",
-  marginTop: -15,
-  marginBottom: 15,
-},
-
-dropdownItem: {
-  padding: 15,
-  fontSize: 16,
-  borderBottomWidth: 1,
-  borderBottomColor: "#ffffff",
-},
-
-itemSelecionado: {
-  backgroundColor: "#efc08f",
-},
-
-verMais: {
-  color: "#0066cc",
-  padding: 15,
-  fontSize: 16,
-},
+  logoutButton: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  logoutButtonText: {
+    color: "#e63946",
+    fontWeight: "700",
+  },
 });
