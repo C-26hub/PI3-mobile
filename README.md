@@ -132,8 +132,11 @@ Projeto desenvolvido durante o curso de **Análise e Desenvolvimento de Sistemas
 
 ### Integrantes
 
-- Maria Eduarda Pereira Vilarim
-- Adicione os demais integrantes aqui
+- Arthur Filipe Rodrigues da Silva
+- Filipe Xavier dos Santos
+- Maria Cecília de Lima e Silva
+- Maria Clara Moutinho Albuquerque Silva
+- Matheus Alves de Arruda
 
 ---
 
@@ -141,8 +144,3 @@ Projeto desenvolvido durante o curso de **Análise e Desenvolvimento de Sistemas
 
 Este projeto foi desenvolvido para fins acadêmicos e educacionais.
 
-
-
-GitHub: https://github.com/seu-usuario
-
-LinkedIn: https://linkedin.com/in/seu-perfil
