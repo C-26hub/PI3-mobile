@@ -14,25 +14,27 @@ import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import * as SecureStore from "expo-secure-store";
 
+//endereço principal do servidor
 const API_BASE_URL = "https://api-horas-complementares.onrender.com";
 
+//cria componente dashboard, controla carregamento e guarda iformação do nomde do aluno vindo da api
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [nomeAluno, setNomeAluno] = useState("Aluno");
-
+//informação dos cards
   const [metricas, setMetricas] = useState({
     aprovadas: 0,
     emAnalise: 0,
     rejeitadas: 0,
     meta: 100,
   });
-
+ //cria lista vazia
   const [atividadesRecentes, setAtividadesRecentes] = useState<any[]>([]);
-
+ // buscar dados da api enquanto carrega
   useEffect(() => {
     carregarDadosDoDashboard();
   }, []);
-
+// busca token do aluno 
   async function carregarDadosDoDashboard() {
     try {
       setLoading(true);
@@ -42,29 +44,29 @@ export default function Dashboard() {
         router.replace("/");
         return;
       }
-
+   // envia token para api em formato json
       const headers = {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       };
-
+   // requisição para buscar informação do aluno para mosttrar no dashboard
       const resDashboard = await fetch(
         `${API_BASE_URL}/api/aluno-portal/dashboard`,
         { headers },
       );
-
+   // usca atividades recentes
       const resSolicitacoes = await fetch(
         `${API_BASE_URL}/api/aluno-portal/solicitacoes?ordenarData=desc`,
         { headers },
       );
-
+  // converte resposta da api para json
       if (resDashboard.ok) {
         const dataDash = await resDashboard.json();
-
+  // pega o primeiro nome pra mostrar na tela
         if (dataDash.aluno?.nome) {
           setNomeAluno(dataDash.aluno.nome.split(" ")[0]); 
         }
-
+  // atualiza valores dos cards baseado na api
         setMetricas({
           aprovadas: dataDash.cards?.horasAprovadas || 0,
           emAnalise: dataDash.cards?.horasEmAnalise || 0,
@@ -92,12 +94,13 @@ export default function Dashboard() {
     }
   }
 
+  // calcula horas faltantes e mostra em % sem o número ficar negativado
   const horasFaltantes = Math.max(0, metricas.meta - metricas.aprovadas);
   const progressoPercentual =
     metricas.meta > 0
       ? Math.min(100, (metricas.aprovadas / metricas.meta) * 100)
       : 0;
-
+//recebe status e devolve cor e texto de acordo
   const getStatusVisual = (status: string) => {
     switch (status) {
       case "APROVADA":
@@ -110,7 +113,7 @@ export default function Dashboard() {
         return { cor: "#999", texto: status };
     }
   };
-
+//se estiver carregando n mostra dashboard
   if (loading) {
     return (
       <View
@@ -126,7 +129,7 @@ export default function Dashboard() {
       </View>
     );
   }
-
+// começo da interface
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <StatusBar style="dark" />
@@ -244,7 +247,7 @@ export default function Dashboard() {
               Nenhuma atividade recente.
             </Text>
           ) : (
-            atividadesRecentes.map((atividade) => {
+            atividadesRecentes.map((atividade) => { //percorre lista procursndo atividade e cria os componentes
               const visual = getStatusVisual(atividade.status);
               return (
                 <View key={atividade.id} style={styles.warningRow}>
@@ -276,7 +279,7 @@ export default function Dashboard() {
         <Pressable
           style={styles.logoutButton}
           onPress={async () => {
-            await SecureStore.deleteItemAsync("userToken");
+            await SecureStore.deleteItemAsync("userToken"); //logout e volta p o login
             router.replace("/");
           }}
         >
@@ -287,6 +290,7 @@ export default function Dashboard() {
   );
 }
 
+// estilização da tela
 const styles = StyleSheet.create({
   container: {
     flex: 1,
