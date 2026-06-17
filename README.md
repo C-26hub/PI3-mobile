@@ -1,75 +1,148 @@
- # 📚 PI3 - Gestão de Horas Complementares
+# 📱 Horas+ Mobile
 
-> **Resumo rápido:** [Uma frase curta que descreve o objetivo do projeto. Exemplo: “Uma aplicação web para monitorar compostagem doméstica usando sensores IoT.”]
+Aplicativo mobile desenvolvido para o projeto **Horas+**, uma plataforma de gerenciamento e acompanhamento de atividades acadêmicas.
 
----
-
-## 📖 Sobre o Projeto
-
-[Descreva aqui o que o projeto faz, qual problema resolve e qual foi a motivação por trás dele.]  
-Exemplo:  
-> Este projeto foi desenvolvido com o objetivo de [melhorar, automatizar, simular, monitorar etc.] [descrição do problema ou contexto].  
-> Ele foi pensado para [usuários, empresas, estudantes etc.] que precisam de uma solução simples e eficiente para [benefício principal].
+O aplicativo permite que estudantes acompanhem suas horas complementares, enviem atividades para validação e visualizem seu progresso acadêmico de forma simples e intuitiva.
 
 ---
 
-## ⚙️ Funcionalidades
+## 🚀 Tecnologias Utilizadas
 
-- [✅ Funcionalidade 1 — breve descrição]
-- [✅ Funcionalidade 2 — breve descrição]
-- [✅ Funcionalidade 3 — breve descrição]
-
-*(Adicione ou remova conforme necessário)*
-
----
-
-## 🧩 Tecnologias Utilizadas
-
-- **Linguagem principal:** [Python / JavaScript / C# / etc.]
-- **Bibliotecas / Frameworks:** [Ex: Flask, React, Pygame, Bootstrap, etc.]
-- **Banco de Dados (se houver):** [SQLite, MySQL, etc.]
-- **Outros:** [APIs, ferramentas externas, etc.]
+- React Native
+- Expo
+- TypeScript
+- JavaScript
+- Node.js
 
 ---
 
-## 🚀 Como Executar o Projeto
+## 📂 Estrutura do Projeto
 
-1. **Clone este repositório:**
-   ```bash
-   git clone https://github.com/[seu-usuario]/[nome-do-repositorio].git
+```bash
+HorasPlus-Mobile/
+│
+├── assets/              # Imagens, ícones e recursos estáticos
+├── src/                 # Código-fonte da aplicação
+│
+├── App.js               # Componente principal
+├── index.js             # Ponto de entrada da aplicação
+├── package.json         # Dependências e scripts
+├── tsconfig.json        # Configuração TypeScript
+└── README.md
+```
 
-2. **Acesse a pasta do projeto:**
-   ```bash
-   cd [nome-do-repositorio]
+---
 
-3. **Instale as dependências:**
-   ```bash
-   [comando de instalação — ex: pip install -r requirements.txt]
+## ⚙️ Pré-requisitos
 
-4. **Execute o projeto:**
-   ```bash
-   [comando para rodar o projeto — ex: python main.py]
+Antes de iniciar o projeto, certifique-se de ter instalado:
 
-## 🗂️ Estrutura dos Scripts / Organização do Repositório
+- Node.js (versão 18 ou superior)
+- npm ou yarn
+- Expo CLI
+- Android Studio (opcional)
+- Expo Go no celular
 
-📁 nome-do-projeto/       
-│    
-├── 📄 README.md  
-├── 📄 requirements.txt   
-├── 📄 main.py  
-├── 📁 src/   
-│   ├── __init__.py   
-│   ├── modulo1.py   
-│   └── modulo2.py   
-├── 📁 assets/    
-│   └── imagens, sons, ícones...    
-└── 📁 tests/    
-    └── test_modulo1.py    
+---
+
+## 📥 Instalação
+
+Clone o repositório:
+
+```bash
+git clone https://github.com/seu-usuario/horasplus-mobile.git
+```
+
+Acesse a pasta do projeto:
+
+```bash
+cd horasplus-mobile
+```
+
+Instale as dependências:
+
+```bash
+npm install
+```
+
+ou
+
+```bash
+yarn install
+```
+
+---
+
+## ▶️ Executando o Projeto
+
+Inicie o servidor Expo:
+
+```bash
+npm start
+```
+
+ou
+
+```bash
+npx expo start
+```
+
+Para executar:
+
+### Android
+
+```bash
+npm run android
+```
+
+### iOS
+
+```bash
+npm run ios
+```
+
+### Web
+
+```bash
+npm run web
+```
+
+---
+
+## 📱 Funcionalidades
+
+- Login de usuários
+- Cadastro de atividades acadêmicas
+- Consulta de horas complementares
+- Acompanhamento de validações
+- Visualização de histórico de atividades
+- Interface responsiva e intuitiva
+
+---
+
+## 🎯 Objetivo do Projeto
+
+O Horas+ foi desenvolvido para facilitar o gerenciamento das atividades acadêmicas dos estudantes, permitindo maior organização, transparência e controle das horas complementares exigidas pelas instituições de ensino.
+
+---
 
 ## 👥 Equipe
-- **Arthur Filipe Rodrigues** – arthur.filipe2402@gmail.com
-- **Filipe Xavier dos Santos** – xfilipe2006.santos@gmail.com  
-- **Maria Cecília de Lima e Silva** – cecilmari33@gmail.com  
-- **Maria Eduarda Pereira Vilarim** – vilarim051@gmail.com
-- **Matheus Alves de Arruda** – matheusalves2906@gmail.com
-- **Maria Clara Moutinho** - moutinhomaria2910@gmail.com
+
+Projeto desenvolvido durante o curso de **Análise e Desenvolvimento de Sistemas** como parte do Projeto Integrador.
+
+### Integrantes
+
+- Maria Eduarda Pereira Vilarim
+- Adicione os demais integrantes aqui
+
+---
+
+## 📄 Licença
+
+Este projeto foi desenvolvido para fins acadêmicos e educacionais.
+
+
+
+GitHub: https://github.com/seu-usuario
+
+LinkedIn: https://linkedin.com/in/seu-perfil
