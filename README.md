@@ -37,9 +37,9 @@ HorasPlus-Mobile/
 
 Antes de iniciar o projeto, certifique-se de ter instalado:
 
-- Node.js (versão 18 ou superior)
+- Node.js (versão 22)
 - npm ou yarn
-- Expo CLI
+- Expo CLI (versão 54)
 - Android Studio (opcional)
 - Expo Go no celular
 
