@@ -54,7 +54,7 @@ export default function Dashboard() {
         `${API_BASE_URL}/api/aluno-portal/dashboard`,
         { headers },
       );
-   // usca atividades recentes
+   // busca atividades recentes
       const resSolicitacoes = await fetch(
         `${API_BASE_URL}/api/aluno-portal/solicitacoes?ordenarData=desc`,
         { headers },
