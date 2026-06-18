@@ -268,7 +268,7 @@ export default function Dashboard() {
 
         <Pressable
           style={styles.seeAllButton}
-          onPress={() => router.push("/(tabs)/historico")} // Rota para a sua tela de histórico
+          onPress={() => router.push("/(tabs)/dashboard/solicitacoes")} // Rota para a sua tela de histórico
         >
           <Text style={styles.seeAllText}>Ver Histórico Completo</Text>
           <Ionicons name="arrow-forward" size={14} color="#0066cc" />
@@ -317,6 +317,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 100,
     height: 48,
+    marginTop: 35,
   },
   buttonAction: {
     flexDirection: "row",
