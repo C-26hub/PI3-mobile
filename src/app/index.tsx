@@ -27,7 +27,7 @@ export default function Home() {
 
     try {
       const response = await fetch(
-        "https://api-horas-complementares.onrender.com/api/auth/login", // 👈 URL corrigida (horas)
+        "https://api-horas-complementares.onrender.com/api/auth/login", 
         {
           method: "POST",
           headers: {
@@ -45,7 +45,7 @@ export default function Home() {
           const errorData = JSON.parse(textoBruto);
           mensagemErro = errorData.error || errorData.erro || mensagemErro;
         } catch {
-          mensagemErro = `Erro do servidor: ${textoBruto}`; // Se for Not Found, exibe sem quebrar
+          mensagemErro = `Erro do servidor: ${textoBruto}`; 
         }
 
         setErro(mensagemErro);

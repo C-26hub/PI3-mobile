@@ -69,7 +69,6 @@ export default function CadModal({
         descricao,
       };
 
-      // 🔥 Chama a função poderosa do Cursos.tsx e passa a bola pra ela!
       await finalizar(dadosParaOBackend);
       
     } catch (error) {

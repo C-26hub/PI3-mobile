@@ -1,8 +1,17 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, FlatList, Pressable, ActivityIndicator, Alert } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Pressable,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
+import * as Linking from 'expo-linking';
 import { useState, useCallback } from "react";
 import { useFocusEffect } from "expo-router";
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 
 const API_BASE_URL = "https://api-horas-complementares.onrender.com";
 
@@ -14,6 +23,9 @@ interface SolicitacaoBackend {
   status: "PENDENTE" | "APROVADA" | "REJEITADA";
   dataEnvio: string;
   podeEditar: boolean;
+  descricao?: string;
+  motivoRecusa?: string;
+  motivo?: string;
 }
 
 export default function Solicitacoes() {
@@ -23,25 +35,28 @@ export default function Solicitacoes() {
   useFocusEffect(
     useCallback(() => {
       buscarSolicitacoes();
-    }, [])
+    }, []),
   );
 
   const buscarSolicitacoes = async () => {
     try {
       setLoading(true);
-      const token = await SecureStore.getItemAsync('userToken');
+      const token = await SecureStore.getItemAsync("userToken");
 
       if (!token) {
         Alert.alert("Erro", "Sessão expirada. Faça login novamente.");
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/aluno-portal/solicitacoes?ordenarData=desc`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/api/aluno-portal/solicitacoes?ordenarData=desc`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
 
       const data = await response.json();
 
@@ -50,7 +65,6 @@ export default function Solicitacoes() {
       }
 
       setSolicitacoes(data.solicitacoes);
-
     } catch (error: any) {
       console.error(error);
       Alert.alert("Erro de Conexão", error.message);
@@ -62,17 +76,19 @@ export default function Solicitacoes() {
   const formatarData = (dataIso: string) => {
     if (!dataIso) return "";
     const data = new Date(dataIso);
-    return data.toLocaleDateString('pt-BR');
+    return data.toLocaleDateString("pt-BR");
   };
 
   const getCorStatus = (status: string) => {
     const statusLimpo = status ? status.trim().toUpperCase() : "PENDENTE";
 
     switch (statusLimpo) {
-      case "APROVADA": return { corTexto: "#155724", corFundo: "#d4edda" };
-      case "REJEITADA": return { corTexto: "#721c24", corFundo: "#f8d7da" };
-      case "PENDENTE": 
-      default: 
+      case "APROVADA":
+        return { corTexto: "#155724", corFundo: "#d4edda" };
+      case "REJEITADA":
+        return { corTexto: "#721c24", corFundo: "#f8d7da" };
+      case "PENDENTE":
+      default:
         return { corTexto: "#856404", corFundo: "#fff3cd" };
     }
   };
@@ -86,7 +102,15 @@ export default function Solicitacoes() {
           <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
             {item.titulo}
           </Text>
-          <Text style={[styles.status, { color: estiloStatus.corTexto, backgroundColor: estiloStatus.corFundo }]}>
+          <Text
+            style={[
+              styles.status,
+              {
+                color: estiloStatus.corTexto,
+                backgroundColor: estiloStatus.corFundo,
+              },
+            ]}
+          >
             {item.status.toUpperCase()}
           </Text>
         </View>
@@ -95,9 +119,41 @@ export default function Solicitacoes() {
           {item.cargaHoraria}h | Enviado em: {formatarData(item.dataEnvio)}
         </Text>
 
-        <Pressable style={styles.button} onPress={() => console.log("Abrir detalhes do ID:", item.id)}>
-          <Text style={styles.buttonText}>Ver Detalhes</Text>
-        </Pressable>
+        {item.status === 'REJEITADA' && (item.motivoRecusa || item.motivo) && (
+          <View style={styles.alertBox}>
+            <Text style={styles.alertTitle}>⚠️ Motivo da Recusa:</Text>
+            <Text style={styles.alertText}>
+              {item.motivoRecusa || item.motivo}
+            </Text>
+          </View>
+        )}
+
+        {item.status === 'REJEITADA' && (
+          <Pressable 
+            style={[styles.button, { borderColor: '#dc3545', backgroundColor: '#fff' }]} 
+            onPress={() => Linking.openURL("https://senachoras.vercel.app")}
+          >
+            <Text style={[styles.buttonText, { color: '#dc3545' }]}>Corrigir no Portal Web</Text>
+          </Pressable>
+        )}
+
+        {item.status === 'APROVADA' && (
+          <Pressable 
+            style={[styles.button, { borderColor: '#28a745', backgroundColor: '#f8fff9' }]} 
+            onPress={() => Alert.alert("Tudo Certo!", `Esta atividade de ${item.cargaHoraria}h já foi validada pela coordenação do Senac e adicionada ao seu histórico.`)}
+          >
+            <Text style={[styles.buttonText, { color: '#28a745' }]}>Ver Confirmação</Text>
+          </Pressable>
+        )}
+
+        {item.status === 'PENDENTE' && (
+          <Pressable 
+            style={[styles.button, { opacity: 0.8, backgroundColor: '#f8f9fa' }]} 
+            onPress={() => Alert.alert("Em Análise", "A coordenação está avaliando seu comprovante. Você será notificado quando houver uma atualização.")}
+          >
+            <Text style={styles.buttonText}>Aguardando Avaliação</Text>
+          </Pressable>
+        )}
       </View>
     );
   };
@@ -111,11 +167,15 @@ export default function Solicitacoes() {
       {loading ? (
         <View style={styles.centerContainer}>
           <ActivityIndicator size="large" color="#0B5AA2" />
-          <Text style={{ marginTop: 10, color: "#666" }}>Carregando histórico...</Text>
+          <Text style={{ marginTop: 10, color: "#666" }}>
+            Carregando histórico...
+          </Text>
         </View>
       ) : solicitacoes.length === 0 ? (
         <View style={styles.centerContainer}>
-          <Text style={{ color: "#666", fontSize: 16 }}>Você ainda não enviou atividades.</Text>
+          <Text style={{ color: "#666", fontSize: 16 }}>
+            Você ainda não enviou atividades.
+          </Text>
         </View>
       ) : (
         <FlatList
@@ -140,32 +200,32 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingBottom: 15,
     paddingHorizontal: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   headerTitle: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   centerContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   card: {
     backgroundColor: "#fff",
     borderRadius: 12,
     marginBottom: 16,
     padding: 16,
-    elevation: 3, 
-    shadowColor: "#000", 
+    elevation: 3,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     borderWidth: 1,
-    borderColor: '#f0f0f0'
+    borderColor: "#f0f0f0",
   },
   topcard: {
     flexDirection: "row",
@@ -178,25 +238,20 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     flexShrink: 1,
     marginRight: 10,
-    color: '#333'
+    color: "#333",
   },
   status: {
     fontSize: 11,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 4,
-    overflow: 'hidden', 
-  },
-  detalhes: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 12,
+    overflow: "hidden",
   },
   button: {
     alignSelf: "flex-start",
     borderRadius: 8,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
     borderColor: "#ddd",
     borderWidth: 1,
     paddingHorizontal: 12,
@@ -204,7 +259,31 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 13,
-    color: '#555',
-    fontWeight: '600',
-  }
+    color: "#555",
+    fontWeight: "600",
+  },
+
+  detalhes: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 12,
+  },
+  alertBox: {
+    backgroundColor: '#FFF3F3',
+    borderLeftWidth: 4,
+    borderLeftColor: '#dc3545',
+    padding: 10,
+    borderRadius: 4,
+    marginBottom: 12, 
+  },
+  alertTitle: {
+    color: '#721c24',
+    fontWeight: 'bold',
+    fontSize: 12,
+    marginBottom: 4,
+  },
+  alertText: {
+    color: '#721c24',
+    fontSize: 12,
+  },
 });

@@ -6,10 +6,10 @@ export default function Layout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#0B5AA2', // Azul Senac para os itens ativos
-        tabBarInactiveTintColor: '#888',  // Cinza para os inativos
+        tabBarActiveTintColor: '#0B5AA2', 
+        tabBarInactiveTintColor: '#888',  
         tabBarStyle: {
-          height: 65,                     // Altura ideal para acomodar texto e ícone confortavelmente
+          height: 65,                     
           paddingBottom: 8,
           paddingTop: 8,
           backgroundColor: '#fff',
@@ -33,12 +33,11 @@ export default function Layout() {
         }} 
       />
 
-      {/* Aba 2: Submeter Certificado (ESTILO TIKTOK) */}
       <Tabs.Screen 
         name="cursos" 
         options={{ 
           headerShown: false, 
-          tabBarLabel: '', // Oculta o texto apenas aqui
+          tabBarLabel: '', 
           tabBarIcon: () => (
             <View style={styles.containerBotaoTikTok}>
               <View style={styles.corpoBotaoTikTok}>
@@ -49,7 +48,6 @@ export default function Layout() {
         }} 
       />
 
-      {/* Aba 3: Solicitações */}
       <Tabs.Screen 
         name="solicitacoes" 
         options={{ 
@@ -66,22 +64,18 @@ export default function Layout() {
 
 const styles = StyleSheet.create({
   containerBotaoTikTok: {
-    width: 48, // Um pouquinho mais largo para dar presença
+    width: 48, 
     height: 30,
-    backgroundColor: '#0B5AA2', // Azul Senac de fundo
+    backgroundColor: '#0B5AA2', 
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    
-    // 👇 O ÚNICO AJUSTE NECESSÁRIO PARA CENTRALIZAR
-    // Empurra o botão levemente para baixo para alinhar com o "centro" da TabBar
-    // já que ele não tem o texto embaixo empurrando ele para cima.
     marginTop: 12, 
   },
   corpoBotaoTikTok: {
     width: '90%',
     height: '100%',
-    backgroundColor: '#D97B2D', // Laranja Senac
+    backgroundColor: '#D97B2D', 
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',

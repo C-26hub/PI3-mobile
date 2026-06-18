@@ -1,4 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
   Text,
@@ -7,13 +7,13 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
-  Alert
-} from 'react-native';
-import { useState } from 'react';
-import { router } from 'expo-router';
+  Alert,
+} from "react-native";
+import { useState } from "react";
+import { router } from "expo-router";
 
 export default function RecuperacaoAluno() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleRecuperar = async () => {
@@ -30,8 +30,8 @@ export default function RecuperacaoAluno() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }), 
-        }
+          body: JSON.stringify({ email }),
+        },
       );
 
       const textoBruto = await response.text();
@@ -44,7 +44,7 @@ export default function RecuperacaoAluno() {
         } catch {
           mensagemErro = `Erro do servidor: ${textoBruto}`;
         }
-        
+
         Alert.alert("Erro", mensagemErro);
         setLoading(false);
         return;
@@ -53,13 +53,13 @@ export default function RecuperacaoAluno() {
       Alert.alert(
         "Link Enviado!",
         "Se os dados estiverem corretos, um link de recuperação foi enviado para o seu e-mail.",
-        [
-          { text: "Voltar ao Login", onPress: () => router.replace('/') }
-        ]
+        [{ text: "Voltar ao Login", onPress: () => router.replace("/") }],
       );
-
     } catch (error) {
-      Alert.alert("Erro de Conexão", "Não foi possível processar a solicitação no momento.");
+      Alert.alert(
+        "Erro de Conexão",
+        "Não foi possível processar a solicitação no momento.",
+      );
       console.error("Erro na recuperação:", error);
     } finally {
       setLoading(false);
@@ -68,19 +68,16 @@ export default function RecuperacaoAluno() {
 
   return (
     <View style={styles.container}>
+      <Image
+        style={styles.logo}
+        source={require("../../assets/Senac_logo.png")}
+      />
       <View style={styles.card}>
-        <Image style={styles.logo} source={require('../../assets/Senac_logo.png')} />
-
-        <Text style={styles.text}>
-          Informações para recuperação de acesso
-        </Text>
+        <Text style={styles.text}>Informações para recuperação de acesso</Text>
 
         <Text style={styles.description}>
-          Um link para redefinição de senha será enviado para o seu e-mail cadastrado no sistema.
-        </Text>
-
-        <Text style={styles.description}>
-          Caso não receba o e-mail, verifique sua caixa de spam ou entre em contato com a secretaria.
+          Um link para redefinição de senha será enviado para o seu e-mail
+          cadastrado no sistema.
         </Text>
 
         <TextInput
@@ -94,7 +91,7 @@ export default function RecuperacaoAluno() {
           editable={!loading}
         />
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.botao, (!email || loading) && { opacity: 0.5 }]}
           disabled={!email || loading}
           onPress={handleRecuperar}
@@ -106,8 +103,13 @@ export default function RecuperacaoAluno() {
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.replace('/')} style={{ marginTop: 20 }}>
-           <Text style={{ color: '#00539C', fontSize: 13, fontWeight: '600' }}>Voltar para o Login</Text>
+        <TouchableOpacity
+          onPress={() => router.replace("/")}
+          style={{ marginTop: 20 }}
+        >
+          <Text style={{ color: "#004A8D", fontSize: 13, fontWeight: "600" }}>
+            Voltar para o Login
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -119,41 +121,43 @@ export default function RecuperacaoAluno() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#00539C',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#ffffff",
+    justifyContent: "center",
+    alignItems: "center",
   },
   card: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 20,
     borderRadius: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '85%',
+    alignItems: "center",
+    justifyContent: "center",
+    width: "85%",
+    marginTop: 20
   },
   logo: {
     width: 100,
     height: 60,
     margin: 20,
+    marginBottom: 40,
   },
   text: {
-    color: '#0A0A0A',
+    color: "#0A0A0A",
     marginBottom: 15,
-    textAlign: 'center',
-    fontWeight: 'bold',
+    textAlign: "center",
+    fontWeight: "bold",
   },
   description: {
-    fontSize: 11,
-    textAlign: 'center',
-    color: '#555',
+    fontSize: 14,
+    textAlign: "center",
+    color: "#555",
     marginBottom: 10,
   },
   input: {
-    width: '100%',
+    width: "100%",
     height: 42,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: "#F5F5F5",
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#999",
     borderRadius: 6,
     paddingHorizontal: 10,
     marginBottom: 10,
@@ -162,15 +166,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   botao: {
-    backgroundColor: '#F28322',
-    width: '100%',
+    backgroundColor: "#F28322",
+    width: "100%",
     paddingVertical: 12,
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 15,
   },
   textoBotao: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
   },
 });

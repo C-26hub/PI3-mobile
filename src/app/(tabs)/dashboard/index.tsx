@@ -265,7 +265,7 @@ export default function Dashboard() {
 
         <Pressable
           style={styles.seeAllButton}
-          onPress={() => router.push("/(tabs)/historico")} // Rota para a sua tela de histórico
+          onPress={() => router.push("/(tabs)/historico")} 
         >
           <Text style={styles.seeAllText}>Ver Histórico Completo</Text>
           <Ionicons name="arrow-forward" size={14} color="#0066cc" />

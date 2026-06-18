@@ -14,10 +14,8 @@ import * as SecureStore from 'expo-secure-store';
 
 import CadModal from "../../../components/CadModal";
 
-// Defina a URL base da sua API
 const API_BASE_URL = "https://api-horas-complementares.onrender.com";
 
-// Chave da IA
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
 
 export default function Cursos() {
@@ -36,7 +34,7 @@ export default function Cursos() {
       if (result.canceled) return;
 
       const file = result.assets[0];
-      setArquivoFisico(file); // Guarda o arquivo para o envio final ao backend
+      setArquivoFisico(file);
       setLoading(true);
 
       const base64Image = await FileSystem.readAsStringAsync(file.uri, {
@@ -52,7 +50,7 @@ export default function Cursos() {
             contents: [
               {
                 parts: [
-                  { text: "Analise este certificado e retorne APENAS um objeto JSON puro, sem blocos de código markdown, com as chaves: 'titulo', 'horas', 'data', 'categoria'. Em 'categoria', classifique obrigatoriamente em apenas uma destas três opções (exatamente em maiúsculas e sem acentos): 'ENSINO', 'EXTENSAO' ou 'PESQUISA'." },
+                  { text: "Analise este certificado e retorne APENAS um objeto JSON puro, sem blocos de código markdown, com as chaves: 'titulo', 'horas', 'data', 'categoria'. Em 'categoria', classifique obrigatoriamente em apenas uma destas três opções (exatamente em maiúsculas e sem acentos): 'ENSINO', 'EXTENSAO' ou 'PESQUISA'. Em 'data', retorne OBRIGATORIAMENTE no formato 'DD/MM/AAAA'. Se o certificado informar um período (ex: 08/05/2026 a 12/06/2026), extraia APENAS a data final de conclusão." },
                   {
                     inline_data: {
                       mime_type: file.mimeType || "image/jpeg",
@@ -105,13 +103,11 @@ export default function Cursos() {
         "Aviso",
         "Não foi possível ler os dados automaticamente. Você precisará preencher manualmente.",
       );
-      // Se a IA falhar, ainda abrimos o modal para preenchimento manual, passando dados vazios
       setDadosCompartilhados({ titulo: "", horas: "", data: "", categoria: "ENSINO" });
       setCadVisible(true);
     }
   };
 
-  // 🔥 Nova função: Integração com o Backend Node.js
   const handleSalvarNoServidor = async (dadosFinaisDoFormulario: any) => {
     try {
       setLoading(true);
@@ -144,7 +140,6 @@ export default function Cursos() {
         headers: {
           "Authorization": `Bearer ${token}`,
           "Accept": "application/json",
-          // O fetch cuida do multipart boundary automaticamente
         },
         body: formData,
       });
