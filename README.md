@@ -136,6 +136,7 @@ Projeto desenvolvido durante o curso de **Análise e Desenvolvimento de Sistemas
 - Filipe Xavier dos Santos
 - Maria Cecília de Lima e Silva
 - Maria Clara Moutinho Albuquerque Silva
+- Maria Eduarda Pereira Vilarim
 - Matheus Alves de Arruda
 
 ---
