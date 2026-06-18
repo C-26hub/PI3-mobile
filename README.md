@@ -67,7 +67,7 @@ Exemplo:
     └── test_modulo1.py    
 
 ## 👥 Equipe
-- **Arthur Filipe Rodrigues** – arthur.filipe2402@gmail.com
+- **Arthur Filipe Rodrigues da Silva** – arthur.filipe2402@gmail.com
 - **Filipe Xavier dos Santos** – xfilipe2006.santos@gmail.com  
 - **Maria Cecília de Lima e Silva** – cecilmari33@gmail.com  
 - **Maria Eduarda Pereira Vilarim** – vilarim051@gmail.com
