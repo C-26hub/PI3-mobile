@@ -1,18 +1,18 @@
  # 📱 Sistema de Gestão de Atividades Complementares - Mobile
 
-> **Resumo rápido:** [Aplicativo mobile desenvolvido em React Native com Expo para auxiliar o gerenciamento de atividades complementares acadêmicas. A plataforma permite que alunos enviem atividades para validação e que coordenadores acompanhem, analisem e aprovem as solicitações de forma prática e organizada.]
+> **Resumo rápido:** Aplicativo mobile desenvolvido em React Native com Expo para auxiliar o gerenciamento de atividades complementares acadêmicas. A plataforma permite que alunos enviem atividades para validação e que coordenadores acompanhem, analisem e aprovem as solicitações de forma prática e organizada.
 
 ---
 
 ## 📖 Sobre o Projeto
 
-[Este projeto foi desenvolvido como parte do Projeto Integrador do curso de Análise e Desenvolvimento de Sistemas, com o objetivo de digitalizar o processo de envio, validação e acompanhamento de atividades complementares.]  
+Este projeto foi desenvolvido como parte do Projeto Integrador do curso de Análise e Desenvolvimento de Sistemas, com o objetivo de digitalizar o processo de envio, validação e acompanhamento de atividades complementares.  
 
 ---
 
 ## ⚙️ Funcionalidades
 
-###🎓 Portal do Aluno
+### 🎓 Portal do Aluno
 - Login no sistema
 - Visualização do perfil
 - Consulta da carga horária complementar
