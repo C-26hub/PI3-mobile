@@ -1,70 +1,92 @@
- # 📚 PI3 - Gestão de Horas Complementares
+ # 📱 Sistema de Gestão de Atividades Complementares - Mobile
 
-> **Resumo rápido:** [Uma frase curta que descreve o objetivo do projeto. Exemplo: “Uma aplicação web para monitorar compostagem doméstica usando sensores IoT.”]
+> **Resumo rápido:** [Aplicativo mobile desenvolvido em React Native com Expo para auxiliar o gerenciamento de atividades complementares acadêmicas. A plataforma permite que alunos enviem atividades para validação e que coordenadores acompanhem, analisem e aprovem as solicitações de forma prática e organizada.]
 
 ---
 
 ## 📖 Sobre o Projeto
 
-[Descreva aqui o que o projeto faz, qual problema resolve e qual foi a motivação por trás dele.]  
-Exemplo:  
-> Este projeto foi desenvolvido com o objetivo de [melhorar, automatizar, simular, monitorar etc.] [descrição do problema ou contexto].  
-> Ele foi pensado para [usuários, empresas, estudantes etc.] que precisam de uma solução simples e eficiente para [benefício principal].
+[Este projeto foi desenvolvido como parte do Projeto Integrador do curso de Análise e Desenvolvimento de Sistemas, com o objetivo de digitalizar o processo de envio, validação e acompanhamento de atividades complementares.]  
 
 ---
 
 ## ⚙️ Funcionalidades
 
-- [✅ Funcionalidade 1 — breve descrição]
-- [✅ Funcionalidade 2 — breve descrição]
-- [✅ Funcionalidade 3 — breve descrição]
-
-*(Adicione ou remova conforme necessário)*
+###🎓 Portal do Aluno
+- Login no sistema
+- Visualização do perfil
+- Consulta da carga horária complementar
+- Envio de novas atividades complementares
+- Upload de comprovantes/certificados
+- Acompanhamento do status das solicitações
+- Visualização do histórico de atividades enviadas
 
 ---
 
 ## 🧩 Tecnologias Utilizadas
 
-- **Linguagem principal:** [Python / JavaScript / C# / etc.]
-- **Bibliotecas / Frameworks:** [Ex: Flask, React, Pygame, Bootstrap, etc.]
-- **Banco de Dados (se houver):** [SQLite, MySQL, etc.]
-- **Outros:** [APIs, ferramentas externas, etc.]
+- React Native
+- Expo
+- JavaScript
+- React Navigation
+- Axios
+- Async Storage
+- Context API
+- Expo Document Picker
+- Expo Image Picker
 
 ---
 
 ## 🚀 Como Executar o Projeto
 
+### Pré-requisitos
+
+### Antes de iniciar, certifique-se de possuir instalado:
+- Node.js
+- npm ou yarn
+- Expo CLI
+
 1. **Clone este repositório:**
    ```bash
-   git clone https://github.com/[seu-usuario]/[nome-do-repositorio].git
+   git clone https://github.com/[seu-usuario]/[PI3-mobile].git
 
 2. **Acesse a pasta do projeto:**
    ```bash
-   cd [nome-do-repositorio]
+   cd [PI3-mobile]
 
 3. **Instale as dependências:**
    ```bash
-   [comando de instalação — ex: pip install -r requirements.txt]
+   [npm install] ou [yarn install]
 
 4. **Execute o projeto:**
    ```bash
-   [comando para rodar o projeto — ex: python main.py]
+   [npx expo start]
+
+  Após executar o comando, será exibido um QR Code.
+
+Você poderá abrir o aplicativo utilizando:
+
+Expo Go (Android)
+Expo Go (iOS)
 
 ## 🗂️ Estrutura dos Scripts / Organização do Repositório
 
-📁 nome-do-projeto/       
+```
+📁 PI3-mobile/       
 │    
-├── 📄 README.md  
-├── 📄 requirements.txt   
-├── 📄 main.py  
+├── 📁 assets/  
 ├── 📁 src/   
-│   ├── __init__.py   
-│   ├── modulo1.py   
-│   └── modulo2.py   
-├── 📁 assets/    
-│   └── imagens, sons, ícones...    
-└── 📁 tests/    
-    └── test_modulo1.py    
+├── 📄 .gitignore  
+├── 📄 app.js  
+├── 📄 app.json   
+├── 📄 README.md   
+├── 📄 declarations.d.ts   
+├── 📄 index.js    
+├── 📄 package-lock.json
+├── 📄 package.json    
+└── 📄 tsconfig.json    
+  
+```
 
 ## 👥 Equipe
 - **Arthur Filipe Rodrigues da Silva** – arthur.filipe2402@gmail.com
